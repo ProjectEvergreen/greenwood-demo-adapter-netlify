@@ -4,11 +4,19 @@
   <head>
     <title>Greenwood Demo - Netlify Adapter</title>
     <script type="module" src="./components/card.js"></script>
+    <script type="module" src="./components/card.manual.js"></script>
 
     <style>
       main {
         width: 70%;
         margin: 0 auto;
+      }
+
+      .demo-container {
+        width: 48%;
+        display: inline-block;
+        border: 1px dotted blue;
+        vertical-align: top;
       }
 
       h1 {
@@ -40,6 +48,22 @@
         });
       });
     </script>
+
+    <!-- Fragment API Setup (Manual) -->
+    <script>
+      globalThis.addEventListener('DOMContentLoaded', () => {
+        const page = 5;
+        let offset = 0 - page;
+
+        globalThis.document.getElementById('load-artists-manual').addEventListener('click', async () => {
+          console.debug('load more artist card fragments (manual)!');
+          offset = offset += page;
+          const html = await fetch(`/api/fragment-manual?offset=${offset}`).then(resp => resp.text());
+
+          document.getElementById('load-artists-manual-output').insertAdjacentHTML('beforeend', html);
+        });
+      });
+    </script>
   </head>
 
   <body>
@@ -48,9 +72,17 @@
 
       <hr/>
 
-      <h1>Demo (WCC + Fragments API)</h1>
-      <button id="load-artists">Load More Artists</button>
-      <div id="load-artists-output"></div>
+      <div class="demo-container">
+        <h1>Demo - WCC + Fragments API</h1>
+        <button id="load-artists">Load More Artists</button>
+        <div id="load-artists-output"></div>
+      </div>
+
+      <div class="demo-container">
+        <h1>Demo - WCC + Fragments API (Manual)</h1>
+        <button id="load-artists-manual">Load More Artists</button>
+        <div id="load-artists-manual-output"></div>
+      </div>
 
     </main>
   </body>
