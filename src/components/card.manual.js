@@ -9,7 +9,7 @@ template.innerHTML = `
 
   <div>
     <slot name="title">My default title</slot>
-    <button onclick="this.parentNode.parentNode.selectArtist()">View Artist Details</button>
+    <button onclick="this.parentNode.parentNode.host.selectArtist()">View Artist Details</button>
     <slot name="thumbnail"></slot>
     <hr/>
   </div>
@@ -18,7 +18,7 @@ template.innerHTML = `
 export default class Card extends HTMLElement {
 
   selectArtist() {
-    alert(`selected artist is => ${this.getAttribute('title')}!`);
+    alert(`selected artist is => ${this.querySelector('[slot=title]').textContent}!`);
   }
 
   connectedCallback() {
