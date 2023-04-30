@@ -20,10 +20,12 @@
     "clean": "rimraf public .greenwood",
     "dev": "greenwood develop",
     "build": "greenwood build",
-    "serve": "greenwood build && greenwood serve"
+    "serve": "greenwood build && greenwood serve",
+    "netlify": "netlify dev"
   },
   "devDependencies": {
     "@greenwood/cli": "^0.28.1",
+    "netlify-cli": "^13.2.2",
     "rimraf": "^5.0.0"
   }
 }
