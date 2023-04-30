@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A demonstration repo for using Greenwood with Netlify Serverless and Edge functions",
   "author": "Owen Buckley <owen@thegreenhouse.io>",
+  "type": "module",
   "license": "ISC",
   "homepage": "https://github.com/ProjectEvergreen/greenwood-demo-adapter-netlify#readme",
   "repository": {
