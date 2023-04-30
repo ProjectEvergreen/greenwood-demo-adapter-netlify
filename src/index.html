@@ -3,6 +3,7 @@
 
   <head>
     <title>Greenwood Demo - Netlify Adapter</title>
+    <script type="module" src="./components/card.js"></script>
 
     <style>
       main {
@@ -15,6 +16,7 @@
       }
     </style>
 
+    <!-- Greeting API Setup -->
     <script type="module">
       const params = new URLSearchParams(globalThis.document?.location?.search);
       const qs = params.has('name') ? `?name=${params.get('name')}` : '';
@@ -22,11 +24,34 @@
 
       document.getElementById('greeting').textContent = data.message;
     </script>
+
+    <!-- Fragment API Setup -->
+    <script>
+      globalThis.addEventListener('DOMContentLoaded', () => {
+        const page = 5;
+        let offset = 0 - page;
+
+        globalThis.document.getElementById('load-artists').addEventListener('click', async () => {
+          console.debug('load more artist card fragments!');
+          offset = offset += page;
+          const html = await fetch(`/api/fragment?offset=${offset}`).then(resp => resp.text());
+
+          document.getElementById('load-artists-output').insertAdjacentHTML('beforeend', html);
+        });
+      });
+    </script>
   </head>
 
   <body>
     <main>
       <h1 id="greeting"></h1>
+
+      <hr/>
+
+      <h1>Demo (WCC + Fragments API)</h1>
+      <button id="load-artists">Load More Artists</button>
+      <div id="load-artists-output"></div>
+
     </main>
   </body>
 </html>
