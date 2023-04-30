@@ -1,0 +1,28 @@
+{
+  "name": "greenwood-demo-adapter-netlify",
+  "version": "1.0.0",
+  "description": "A demonstration repo for using Greenwood with Netlify Serverless and Edge functions",
+  "author": "Owen Buckley <owen@thegreenhouse.io>",
+  "license": "ISC",
+  "homepage": "https://github.com/ProjectEvergreen/greenwood-demo-adapter-netlify#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ProjectEvergreen/greenwood-demo-adapter-netlify.git"
+  },
+  "keywords": [
+    "Netlify",
+    "Greenwood",
+    "Serverless",
+    "Edge"
+  ],
+  "scripts": {
+    "clean": "rimraf public .greenwood",
+    "dev": "greenwood develop",
+    "build": "greenwood build",
+    "serve": "greenwood build && greenwood serve"
+  },
+  "devDependencies": {
+    "@greenwood/cli": "^0.28.1",
+    "rimraf": "^5.0.0"
+  }
+}
