@@ -3,9 +3,30 @@
 
   <head>
     <title>Greenwood Demo - Netlify Adapter</title>
+
+    <style>
+      main {
+        width: 70%;
+        margin: 0 auto;
+      }
+
+      h1 {
+        text-align: center;
+      }
+    </style>
+
+    <script type="module">
+      const params = new URLSearchParams(globalThis.document?.location?.search);
+      const qs = params.has('name') ? `?name=${params.get('name')}` : '';
+      const data = await fetch(new URL(`/api/greeting${qs}`, import.meta.url)).then(resp => resp.json());
+
+      document.getElementById('greeting').textContent = data.message;
+    </script>
   </head>
 
   <body>
-    <h1>Hello World!</h1>
+    <main>
+      <h1 id="greeting"></h1>
+    </main>
   </body>
 </html>
