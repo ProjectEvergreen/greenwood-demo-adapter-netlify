@@ -4,7 +4,7 @@
 
 > ⚠️ _**Note**: Currently this repo is a WIP_
 
-A demonstration repo for using Greenwood with Netlify Serverless and Edge functions for APIs and SSR pages and used in part of crafting its design for [introducing platform "adapters" into Greenwood](https://github.com/ProjectEvergreen/greenwood/issues/1008).
+A demonstration repo for using Greenwood with Netlify Serverless and Edge functions for APIs and SSR pages and used in part of crafting its design for [introducing platform "adapters" into Greenwood](https://github.com/ProjectEvergreen/greenwood/issues/1008).  It also takes reference from [this repo / presentation](https://github.com/thescientist13/web-components-at-the-edge/) for some earlier prototypes for server rendering Web Components.
 
 ## Setup
 
