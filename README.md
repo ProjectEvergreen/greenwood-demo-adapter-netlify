@@ -4,7 +4,7 @@
 
 > ⚠️ _**Note**: Currently this repo is a WIP_
 
-A demonstration repo for using Greenwood with Netlify Serverless and Edge functions for APIs and SSR pages.
+A demonstration repo for using Greenwood with Netlify Serverless and Edge functions for APIs and SSR pages and used in part of crafting its design for [introducing platform "adapters" into Greenwood](https://github.com/ProjectEvergreen/greenwood/issues/1008).
 
 ## Setup
 
@@ -119,24 +119,6 @@ export async function handler(request) {
 So although this runs fine locally for `/api/fragment-manual`, when run on Netlify, the `ERR_REQUIRE_ESM` message is seen.
 
 ![Netlify ERR_REQUIRE_ESM](./netlify-err-require-esm.png)
-
-Not sure if related to this console message seen in the Netlify dev server?
-```
-ESM vs CJS
-```sh
-▲ [WARNING] The CommonJS "exports" variable is treated as a global variable in an ECMAScript module and may not work as expected
-
-netlify/functions/hello.js:1:0:
-  1 │ exports.handler = async function (event, context) {
-    ╵ ~~~~~~~
-
-This file is considered to be an ECMAScript module because the enclosing "package.json" file sets
-the type of this file to "module":
-
-  package.json:5:10:
-    5 │   "type": "module",
-      ╵           ~~~~~~~~
-```
 
 ### SSR Pages
 
