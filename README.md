@@ -143,4 +143,4 @@ TODO
 1. Will need to generate the _.netlify/functions_ folder on-demand / as part of the build instead of hardcoding, likely from _manifest.json_
 1. How to best manage local dev (runtime "compliance")
     - proxy netlify cli dev option?
-    - should use _src/_ or _public/_?  depends on dev vs production mode?
+    - should use _src/_ or _public/_?  depends on dev vs production mode?  Interestingly, the manual way only worked deployed when using _public/_
