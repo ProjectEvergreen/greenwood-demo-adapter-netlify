@@ -4,7 +4,7 @@
 
 > ⚠️ _**Note**: Currently this repo is a WIP_
 
-A demonstration repo for using Greenwood with Netlify Serverless and Edge functions for APIs and SSR pages and used in part of crafting its design for [introducing platform "adapters" into Greenwood](https://github.com/ProjectEvergreen/greenwood/issues/1008).
+A demonstration repo for using Greenwood with Netlify Serverless and Edge functions for APIs and SSR pages and used in part of crafting its design for [introducing platform "adapters" into Greenwood](https://github.com/ProjectEvergreen/greenwood/issues/1008).  It also takes reference from [this repo / presentation](https://github.com/thescientist13/web-components-at-the-edge/) for some earlier prototypes for server rendering Web Components.
 
 ## Setup
 
@@ -27,7 +27,7 @@ This repo aims to demonstrate a couple of Greenwood's features ([API Routes](htt
 
 |Feature    |Greenwood |Serverless|Edge|
 |---------- |----------|----------|----|
-|API Routes |   ✅     |  ⛔       | ❓ |
+|API Routes |   ✅     |  ⚠️       | ❓ |
 |SSR Pages  | ❓       | ❓        | ❓ | 
 
 ## Serverless
@@ -35,7 +35,7 @@ This repo aims to demonstrate a couple of Greenwood's features ([API Routes](htt
 The serverless demos include the following examples:
 - ✅ [`/api/greeting?name{xxx}`](https://harmonious-gaufre-bb14cf.netlify.app/api/greeting) - An API that returns a JSON response and optionally uses the `name` query param for customization.  Otherwise returns a default message.
 - ⛔ [`/api/fragment`](https://harmonious-gaufre-bb14cf.netlify.app/api/fragment) - An API for returning fragments of server rendered Web Components as HTML, that are then appended to the DOM.  The same card component used in SSR also runs on the client to provide interactivity, like event handling.
-- ⛔ [`/api/fragment-manual`](https://harmonious-gaufre-bb14cf.netlify.app/api/fragment-manual) - Same as the above API, but using WCC in a more "manual" fashion for comparison since Netlify / esbuild does not support `import.meta.url`.
+- ✅ [`/api/fragment-manual`](https://harmonious-gaufre-bb14cf.netlify.app/api/fragment-manual) - Same as the above API, but using WCC in a more "manual" fashion for comparison since Netlify does not support `import.meta.url`.  The WC implementation uses Declarative Shadow DOM and `<slot>`s for composition instead of attributes.
 
 ### API Routes
 
@@ -114,7 +114,9 @@ export async function handler(request) {
 }
 ```
 
-####  ⛔ ERR_REQUIRE_ESM
+####  ✅ ERR_REQUIRE_ESM
+
+> _**Note**: Solved by [pointing to Greenwood's bundled output in the _public/_ directory](https://github.com/ProjectEvergreen/greenwood-demo-adapter-netlify/pull/1)_
 
 So although this runs fine locally for `/api/fragment-manual`, when run on Netlify, the `ERR_REQUIRE_ESM` message is seen.
 
@@ -141,4 +143,4 @@ TODO
 1. Will need to generate the _.netlify/functions_ folder on-demand / as part of the build instead of hardcoding, likely from _manifest.json_
 1. How to best manage local dev (runtime "compliance")
     - proxy netlify cli dev option?
-    - should use src or public?  depends on dev vs production mode?
+    - should use _src/_ or _public/_?  depends on dev vs production mode?  Interestingly, the manual way only worked deployed when using _public/_
