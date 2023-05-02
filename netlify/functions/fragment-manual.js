@@ -1,4 +1,4 @@
-import { handler as fragment } from '../../src/api/fragment-manual.js';
+import { handler as fragment } from '../../public/api/fragment-manual.js';
 
 export async function handler (event, context) {
   const { rawUrl, headers } = event;
