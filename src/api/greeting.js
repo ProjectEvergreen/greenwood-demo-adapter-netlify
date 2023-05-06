@@ -1,7 +1,9 @@
-export async function handler(request) { // <-- new Request
+import { getMessage } from '../services/message.js';
+
+export async function handler(request) {
   const params = new URLSearchParams(request.url.slice(request.url.indexOf('?')));
   const name = params.has('name') ? params.get('name') : 'Greenwood';
-  const body = { message: `Hello ${name}!!!` };
+  const body = { message: getMessage(name) };
   const headers = new Headers();
 
   headers.append('Content-Type', 'application/json');
