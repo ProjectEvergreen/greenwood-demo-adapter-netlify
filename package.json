@@ -24,7 +24,7 @@
     "netlify": "netlify dev"
   },
   "devDependencies": {
-    "@greenwood/cli": "^0.28.1",
+    "@greenwood/cli": "^0.28.2",
     "netlify-cli": "^13.2.2",
     "rimraf": "^5.0.0"
   }
