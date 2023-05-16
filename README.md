@@ -15,7 +15,7 @@ To run locally
 You can now run these npm scripts
 - `npm run dev` - Start the demo with Greenwood local dev server
 - `npm run serve` - Start the demo with a production Greenwood build
-- `npm run netlify` - Start the Netlify local dev server
+- `npm run netlify` - Start the Netlify server (live reload not supported)
 
 > 👉 **Note**: _If deploying to your own Netlify instance, make sure you set the `AWS_LAMBDA_JS_RUNTIME` environment variable [in your Netlify UI](https://answers.netlify.com/t/aws-lambda-js-runtime-nodejs14-x/32161/2) to the value of  `nodejs18.x`_.
 
@@ -28,16 +28,17 @@ This repo aims to demonstrate a couple of Greenwood's features ([API Routes](htt
 |Feature    |Greenwood |Serverless|Edge|
 |---------- |----------|----------|----|
 |API Routes |   ✅     |  ⚠️       | ❓ |
-|SSR Pages  | ❓       | ❓        | ❓ | 
+|SSR Pages  | ⚠️       | ⚠️        | ❓ |
 
 ## Serverless
 
 The serverless demos include the following examples:
+
+### API Routes
+
 - ✅ [`/api/greeting?name{xxx}`](https://harmonious-gaufre-bb14cf.netlify.app/api/greeting) - An API that returns a JSON response and optionally uses the `name` query param for customization.  Otherwise returns a default message.
 - ⛔ [`/api/fragment`](https://harmonious-gaufre-bb14cf.netlify.app/api/fragment) - An API for returning fragments of server rendered Web Components as HTML, that are then appended to the DOM.  The same card component used in SSR also runs on the client to provide interactivity, like event handling.
 - ✅ [`/api/fragment-manual`](https://harmonious-gaufre-bb14cf.netlify.app/api/fragment-manual) - Same as the above API, but using WCC in a more "manual" fashion for comparison since Netlify does not support `import.meta.url`.  The WC implementation uses Declarative Shadow DOM and `<slot>`s for composition instead of attributes.
-
-### API Routes
 
 ####  ⛔ import.meta.url
 
@@ -124,6 +125,11 @@ So although this runs fine locally for `/api/fragment-manual`, when run on Netli
 
 ### SSR Pages
 
+-  ⛔ [`/artists`](https://harmonious-gaufre-bb14cf.netlify.app/artists) - SSR page for rendering Greenwood pages.  This implementation does not work because of `import.meta.url` (see above section on APIs)
+- ✅ [`/artists-manual`](https://harmonious-gaufre-bb14cf.netlify.app/artists-manual) - Same as the above page, but using WCC in a more "manual" fashion for comparison since Netlify does not support `import.meta.url`.  The WC implementation uses Declarative Shadow DOM and `<slot>`s for composition instead of attributes.
+
+> _**Note**: There is an interesting issue here because Greenwood would have to do a different type of output for manual bootstrapping vs "idiomatic" bootstrapping.  Maybe this will have to be an override provided by the adapter plugin at build time?_
+
 TODO
 
 ## Edge
@@ -139,8 +145,13 @@ TODO
 TODO
 
 ## Adapter Implementation Thoughts / Questions
-
-1. Will need to generate the _.netlify/functions_ folder on-demand / as part of the build instead of hardcoding, likely from _manifest.json_
-1. How to best manage local dev (runtime "compliance")
+1. [ ] Do we even need workers for build output?
+    - if not, how to make a generic solution?  (make a pure `executeModule` function and run the worker ourselves when needed in dev mode?)
+1. [ ] Will need to generate the _.netlify/functions_ folder on-demand / as part of the build instead of hardcoding, likely from _manifest.json_
+1. [ ] For SSR pages, manual is the only option?  That will impact how pages can be built, e.g. manual card, shadow dom, etc and might to be configurable based on if the platform supports `import.meta.url` or not it seems.
+1. [ ] How to best manage local dev (runtime "compliance")
     - proxy netlify cli dev option?
     - should use _src/_ or _public/_?  depends on dev vs production mode?  Interestingly, the manual way only worked deployed when using _public/_
+1. [ ] Make sure to spread all headers / response properties in netlify functions adapter output
+1. [ ] SSR pages are bundling into _public/api/_ directory ? 
+1. [ ] Keep it as an experimental feature for 1.0 (or per platform?)

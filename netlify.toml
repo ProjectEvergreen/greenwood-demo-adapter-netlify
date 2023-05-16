@@ -12,3 +12,16 @@
   from = "/api/*"
   to = "/.netlify/functions/:splat"
   status = 200
+
+# https://answers.netlify.com/t/serve-a-serverless-function-from-root/47275/2
+[[redirects]]
+  from = "/artists/"
+  to = "/.netlify/functions/artists"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/artists-manual/"
+  to = "/.netlify/functions/artists-manual"
+  status = 200
+  force = true
