@@ -21,7 +21,7 @@
     "dev": "greenwood develop",
     "build": "greenwood build",
     "serve": "greenwood build && greenwood serve",
-    "netlify": "netlify dev"
+    "netlify": "greenwood build && netlify dev"
   },
   "devDependencies": {
     "@greenwood/cli": "^0.28.2",
