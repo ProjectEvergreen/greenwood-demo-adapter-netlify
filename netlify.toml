@@ -8,6 +8,9 @@
 [build.environment]
   NODE_VERSION = "18.12.1"
 
+[functions]
+  node_bundler = "esbuild"
+
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
