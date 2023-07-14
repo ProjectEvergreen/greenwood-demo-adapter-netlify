@@ -48,8 +48,8 @@ function generateOutputFormat(id, type) {
 
 async function netlifyAdapter(compilation) {
   console.log('ENTER netlifyAdapter');
-  const { outputDir, projectDirectory } = compilation.context;
-  const adapterOutputUrl = new URL('./netlify/functions/', projectDirectory);
+  const { outputDir, projectDirectory, scratchDir } = compilation.context;
+  const adapterOutputUrl = new URL('./netlify/functions/', scratchDir);
   const ssrPages = compilation.graph.filter(page => page.isSSR);
   const apiRoutes = compilation.manifest.apis;
 
@@ -67,7 +67,7 @@ async function netlifyAdapter(compilation) {
 
   const files = await fs.readdir(outputDir);
   const isExecuteRouteModule = files.find(file => file.startsWith('execute-route-module'));
-  // await fs.mkdir(new URL('./.netlify/functions/', projectDirectory), { recursive: true });
+  await fs.mkdir(new URL('./netlify/functions/', projectDirectory), { recursive: true });
 
   for (const page of ssrPages) {
     const { id } = page;
@@ -106,8 +106,8 @@ async function netlifyAdapter(compilation) {
     // TODO manifest options, like node version?
     // https://github.com/netlify/zip-it-and-ship-it#options
     await zip(
-      new URL(`./netlify/functions/${id}/`, projectDirectory).pathname,
-      new URL(`./netlify/functions/${id}/${id}.zip`, projectDirectory).pathname
+      new URL(`./${id}/`, adapterOutputUrl).pathname,
+      new URL(`./netlify/functions/${id}.zip`, projectDirectory).pathname
     );
   }
 
