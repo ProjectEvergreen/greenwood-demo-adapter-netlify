@@ -28,7 +28,7 @@ This repo aims to demonstrate a couple of Greenwood's features ([API Routes](htt
 |Feature    |Greenwood |Serverless|Edge|
 |---------- |----------|----------|----|
 |API Routes |   ✅     |  ⚠️       | ❓ |
-|SSR Pages  |   ✅     |  ⚠️       | ❓ |
+|SSR Pages  |   ✅     |  ✅       | ❓ |
 
 ## Serverless
 
@@ -36,11 +36,12 @@ The serverless demos include the following examples:
 
 ### API Routes
 
-- ✅ [`/api/greeting?name{xxx}`](https://harmonious-gaufre-bb14cf.netlify.app/api/greeting) - An API that returns a JSON response and optionally uses the `name` query param for customization.  Otherwise returns a default message.
+- ⛔ [`/api/greeting?name{xxx}`](https://harmonious-gaufre-bb14cf.netlify.app/api/greeting) - An API that returns a JSON response and optionally uses the `name` query param for customization.  Otherwise returns a default message.
 - ⛔ [`/api/fragment`](https://harmonious-gaufre-bb14cf.netlify.app/api/fragment) - An API for returning fragments of server rendered Web Components as HTML, that are then appended to the DOM.  The same card component used in SSR also runs on the client to provide interactivity, like event handling.
-- ✅ [`/api/fragment-manual`](https://harmonious-gaufre-bb14cf.netlify.app/api/fragment-manual) - Same as the above API, but using WCC in a more "manual" fashion for comparison since Netlify does not support `import.meta.url`.  The WC implementation uses Declarative Shadow DOM and `<slot>`s for composition instead of attributes.
 
-####  ⛔ import.meta.url
+####  ✅ import.meta.url
+
+> _**Note**: Solved by [bypassing Netlify's bundling and just creating a zip file custom build output](https://github.com/ProjectEvergreen/greenwood-demo-adapter-netlify/pull/4/commits/7787bc62cb891169a2c8156c0790f648288cab0b)_
 
 Seeing this issue when creating an "idiomatic" example of a custom element using WCC's `renderFromHTML` because [Netlify / esbuild](https://github.com/evanw/esbuild/issues/795) does not support `import.meta.url`, though hopefully it is [coming soon](https://github.com/evanw/esbuild/pull/2508)? 🥺
 
@@ -125,8 +126,7 @@ So although this runs fine locally for `/api/fragment-manual`, when run on Netli
 
 ### SSR Pages
 
--  ⛔ [`/artists`](https://harmonious-gaufre-bb14cf.netlify.app/artists) - SSR page for rendering Greenwood pages.  This implementation does not work because of `import.meta.url` (see above section on APIs)
-- ✅ [`/artists-manual`](https://harmonious-gaufre-bb14cf.netlify.app/artists-manual) - Same as the above page, but using WCC in a more "manual" fashion for comparison since Netlify does not support `import.meta.url`.  The WC implementation uses Declarative Shadow DOM and `<slot>`s for composition instead of attributes.
+-  ✅ [`/artists`](https://harmonious-gaufre-bb14cf.netlify.app/artists) - SSR page for rendering Greenwood pages.  This implementation does not work because of `import.meta.url` (see above section on APIs)
 
 > _**Note**: There is an interesting issue here because Greenwood would have to do a different type of output for manual bootstrapping vs "idiomatic" bootstrapping.  Maybe this will have to be an override provided by the adapter plugin at build time?_
 
