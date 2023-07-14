@@ -9,7 +9,7 @@ function generateOutputFormat(id, type) {
 
   // TODO use `new Headers` here?
   return `
-    import { handler as fragment } from './__${id}.js';
+    import { handler as ${id} } from './__${id}.js';
 
     export async function handler (event, context) {
       console.log('enter api handler for ${id}!');
