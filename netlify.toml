@@ -9,8 +9,8 @@
   NODE_VERSION = "18.12.1"
 
 # https://answers.netlify.com/t/lambda-function-es-module-support/30673/16
-[functions]
-  node_bundler = "esbuild"
+# [functions]
+#   node_bundler = "esbuild"
 
 [[redirects]]
   from = "/api/*"
