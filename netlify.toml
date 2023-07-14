@@ -8,8 +8,8 @@
 [build.environment]
   NODE_VERSION = "18.12.1"
 
-# [functions]
-#   node_bundler = "esbuild"
+[functions]
+  node_bundler = "esbuild"
 
 [[redirects]]
   from = "/api/*"
