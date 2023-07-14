@@ -1,14 +1,9 @@
 // https://docs.netlify.com/functions/deploy/?fn-language=js#custom-build-2
 import fs from 'fs/promises';
 import { checkResourceExists } from '@greenwood/cli/src/lib/resource-utils.js';
-import { zipFunctions } from '@netlify/zip-it-and-ship-it'
 import { zip } from 'zip-a-folder';
 
-function generateOutputFormat(id, type) {
-  // const path = type === 'page'
-  //   ? `__${id}`
-  //   : `_${id;
-
+function generateOutputFormat(id) {
   // TODO use `new Headers` here?
   return `
     import { handler as ${id} } from './__${id}.js';
@@ -26,24 +21,6 @@ function generateOutputFormat(id, type) {
       };
     }
   `
-
-  // return `
-  //   import { handler as ${id} } from './${path}.js';
-
-  //   export default async function handler (request, response) {
-  //     console.log('enter api handler for ${id}!');
-  //     const { url, headers } = request;
-  //     const req = new Request(new URL(url, \`http://\${headers.host}\`), {
-  //       headers: new Headers(headers)
-  //     });
-  //     const res = await ${id}(req);
-
-  //     // TODO need to handle all Response properties like headers
-  //     // https://vercel.com/docs/concepts/functions/serverless-functions/runtimes/node-js#node.js-request-and-response-objects
-  //     response.status(res.status);
-  //     response.send(await res.text());
-  //   }
-  // `;
 }
 
 async function netlifyAdapter(compilation) {
@@ -133,24 +110,6 @@ async function netlifyAdapter(compilation) {
       { recursive: true }
     );
   }
-
-  // await fs.rm(new URL(`./netlify/`, projectDirectory), { recursive: true });
-
-  // await zipFunctions(
-  //   new URL('./netlify/functions/', projectDirectory).pathname, 
-  //   new URL('./.netlify/functions/', projectDirectory).pathname, {
-  //   archiveFormat: 'zip',
-  //   nodeVersion: '18',
-  //   nodeBundler: 'esbuild'
-  // })
-  // static assets / build
-  // await fs.cp(
-  //   outputDir,
-  //   new URL('./.vercel/output/static/', projectDirectory),
-  //   {
-  //     recursive: true
-  //   }
-  // )
 }
 
 const greenwoodPluginAdapterNetlify = (options = {}) => [{
