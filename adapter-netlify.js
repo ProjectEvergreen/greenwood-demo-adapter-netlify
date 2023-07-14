@@ -11,13 +11,18 @@ function generateOutputFormat(id, type) {
 
   // TODO use `new Headers` here?
   return `
+    import { handler as ${id} } from './__${id}.js';
+
     export async function handler (event, context) {
       console.log('enter api handler for ${id}!');
-    
+      const { rawUrl, headers } = event;
+      const request = new Request(rawUrl, { headers });
+      const response = await ${id}(request);
+
       // TODO need to handle all Response properties like headers
       return {
-        statusCode: 200, // response.status,
-        body: '<h1>Hello World!</h1>'
+        statusCode: response.status,
+        body: await response.text()
       };
     }
   `
@@ -52,10 +57,6 @@ async function netlifyAdapter(compilation) {
     await fs.mkdir(adapterOutputUrl, { recursive: true });
   }
 
-  // await fs.writeFile(new URL('./.vercel/output/config.json', projectDirectory), JSON.stringify({
-  //   'version': 3
-  // }));
-
   console.log({ ssrPages, apiRoutes, adapterOutputUrl });
   console.log('compilation.context.outputDir ????', outputDir);
   console.log('CWD (import.meta.url)????', import.meta.url);
@@ -71,7 +72,7 @@ async function netlifyAdapter(compilation) {
 
     await fs.mkdir(outputRoot, { recursive: true });
     await fs.writeFile(new URL(`./${id}.js`, outputRoot), outputFormat);
-    // TODO needed?
+    // ~~TODO needed?~~ - yes!
     await fs.writeFile(new URL(`./package.json`, outputRoot), JSON.stringify({
       type: 'module'
     }));
