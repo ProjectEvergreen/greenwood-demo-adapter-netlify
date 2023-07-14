@@ -8,8 +8,8 @@
 [build.environment]
   NODE_VERSION = "18.12.1"
 
-[functions]
-  node_bundler = "esbuild"
+# [functions]
+#   node_bundler = "esbuild"
 
 [[redirects]]
   from = "/api/*"
@@ -20,11 +20,5 @@
 [[redirects]]
   from = "/artists/"
   to = "/.netlify/functions/artists"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/artists-manual/"
-  to = "/.netlify/functions/artists-manual"
   status = 200
   force = true

@@ -1,8 +1,9 @@
 import '../components/card.js';
+import { getArtists } from '../services/artists.js';
 
 export default class ArtistsPage extends HTMLElement {
   async connectedCallback() {
-    const artists = await fetch('https://www.analogstudios.net/api/artists').then(resp => resp.json());
+    const artists = await getArtists();
     const html = artists.map(artist => {
       const { name, imageUrl } = artist;
 
@@ -16,6 +17,7 @@ export default class ArtistsPage extends HTMLElement {
     }).join('');
 
     this.innerHTML = `
+      <a href="/">&lt; Back</a>
       <h1>List of Artists: ${artists.length}</h1>
       ${html}
     `;
