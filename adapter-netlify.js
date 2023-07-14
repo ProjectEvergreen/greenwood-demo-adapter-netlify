@@ -67,7 +67,7 @@ async function netlifyAdapter(compilation) {
 
   const files = await fs.readdir(outputDir);
   const isExecuteRouteModule = files.find(file => file.startsWith('execute-route-module'));
-  await fs.mkdir(new URL('./.netlify/functions/', projectDirectory), { recursive: true });
+  // await fs.mkdir(new URL('./.netlify/functions/', projectDirectory), { recursive: true });
 
   for (const page of ssrPages) {
     const { id } = page;
@@ -107,7 +107,7 @@ async function netlifyAdapter(compilation) {
     // https://github.com/netlify/zip-it-and-ship-it#options
     await zip(
       new URL(`./netlify/functions/${id}/`, projectDirectory).pathname,
-      new URL(`./.netlify/functions/${id}.zip`, projectDirectory).pathname
+      new URL(`./netlify/functions/${id}/${id}.zip`, projectDirectory).pathname
     );
   }
 
@@ -138,7 +138,7 @@ async function netlifyAdapter(compilation) {
     );
   }
 
-  await fs.rm(new URL(`./netlify/`, projectDirectory), { recursive: true });
+  // await fs.rm(new URL(`./netlify/`, projectDirectory), { recursive: true });
 
   // await zipFunctions(
   //   new URL('./netlify/functions/', projectDirectory).pathname, 
