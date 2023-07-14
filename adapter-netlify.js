@@ -1,6 +1,7 @@
 // https://docs.netlify.com/functions/deploy/?fn-language=js#custom-build-2
 import fs from 'fs/promises';
 import { checkResourceExists } from '@greenwood/cli/src/lib/resource-utils.js';
+import { zipFunctions } from '@netlify/zip-it-and-ship-it'
 
 function generateOutputFormat(id, type) {
   // const path = type === 'page'
@@ -74,9 +75,9 @@ async function netlifyAdapter(compilation) {
     await fs.mkdir(outputRoot, { recursive: true });
     await fs.writeFile(new URL(`./index.js`, outputRoot), outputFormat);
     // TODO needed?
-    await fs.writeFile(new URL(`./package.json`, outputRoot), JSON.stringify({
-      type: 'module'
-    }));
+    // await fs.writeFile(new URL(`./package.json`, outputRoot), JSON.stringify({
+    //   type: 'module'
+    // }));
 
     await fs.cp(
       new URL(`./_${id}.js`, outputDir),
@@ -127,6 +128,12 @@ async function netlifyAdapter(compilation) {
       { recursive: true }
     );
   }
+
+  await zipFunctions(
+    new URL('./netlify/functions', projectDirectory).pathname, 
+    new URL('./.netlify/functions', projectDirectory).pathname, {
+    archiveFormat: 'zip',
+  })
 
   // static assets / build
   // await fs.cp(
