@@ -103,6 +103,8 @@ async function netlifyAdapter(compilation) {
       )
     }
 
+    // TODO manifest options, like node version?
+    // https://github.com/netlify/zip-it-and-ship-it#options
     await zip(
       new URL(`./netlify/functions/${id}/`, projectDirectory).pathname,
       new URL(`./.netlify/functions/${id}.zip`, projectDirectory).pathname
@@ -135,6 +137,8 @@ async function netlifyAdapter(compilation) {
       { recursive: true }
     );
   }
+
+  await fs.rm(new URL(`./netlify/`, projectDirectory), { recursive: true });
 
   // await zipFunctions(
   //   new URL('./netlify/functions/', projectDirectory).pathname, 
