@@ -11,18 +11,18 @@ function generateOutputFormat(id, type) {
 
   // TODO use `new Headers` here?
   return `
-    import { handler as ${id} } from './__${id}.js';
+    // import { handler as ${id} } from './__${id}.js';
 
     export async function handler (event, context) {
       console.log('enter api handler for ${id}!');
-      const { rawUrl, headers } = event;
-      const request = new Request(rawUrl, { headers });
-      const response = await ${id}(request);
+      // const { rawUrl, headers } = event;
+      // const request = new Request(rawUrl, { headers });
+      // const response = await ${id}(request);
     
       // TODO need to handle all Response properties like headers
       return {
-        statusCode: response.status,
-        body: await response.text()
+        statusCode: 200, // response.status,
+        body: '<h1>Hello World!</h1>'
       };
     }
   `
