@@ -145,13 +145,16 @@ TODO
 TODO
 
 ## Adapter Implementation Thoughts / Questions
-1. [ ] Do we even need workers for build output?
+1. [x] Do we even need workers for build output?
     - if not, how to make a generic solution?  (make a pure `executeModule` function and run the worker ourselves when needed in dev mode?)
-1. [ ] Will need to generate the _.netlify/functions_ folder on-demand / as part of the build instead of hardcoding, likely from _manifest.json_
-1. [ ] For SSR pages, manual is the only option?  That will impact how pages can be built, e.g. manual card, shadow dom, etc and might to be configurable based on if the platform supports `import.meta.url` or not it seems.
+1. [x] Will need to generate the _.netlify/functions_ folder on-demand / as part of the build instead of hardcoding, likely from _manifest.json_
+1. [x] For SSR pages, manual is the only option?  That will impact how pages can be built, e.g. manual card, shadow dom, etc and might to be configurable based on if the platform supports `import.meta.url` or not it seems.
+    - we can get around this using our own bundling solution - https://docs.netlify.com/functions/deploy/?fn-language=js#custom-build-2
 1. [ ] How to best manage local dev (runtime "compliance")
     - proxy netlify cli dev option?
     - should use _src/_ or _public/_?  depends on dev vs production mode?  Interestingly, the manual way only worked deployed when using _public/_
+    - if esbuild worked w/ `import.meta.url`, we could probably ship unzipped bundles, and then dev would also work?
+1. [ ] Need to provide custom _netlify.toml_?
 1. [ ] Make sure to spread all headers / response properties in netlify functions adapter output
 1. [ ] SSR pages are bundling into _public/api/_ directory ? 
 1. [ ] Keep it as an experimental feature for 1.0 (or per platform?)
