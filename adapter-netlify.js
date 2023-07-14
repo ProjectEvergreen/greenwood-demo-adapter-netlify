@@ -72,9 +72,9 @@ async function netlifyAdapter(compilation) {
     await fs.mkdir(outputRoot, { recursive: true });
     await fs.writeFile(new URL(`./${id}.js`, outputRoot), outputFormat);
     // TODO needed?
-    // await fs.writeFile(new URL(`./package.json`, outputRoot), JSON.stringify({
-    //   type: 'module'
-    // }));
+    await fs.writeFile(new URL(`./package.json`, outputRoot), JSON.stringify({
+      type: 'module'
+    }));
 
     await fs.cp(
       new URL(`./_${id}.js`, outputDir),
