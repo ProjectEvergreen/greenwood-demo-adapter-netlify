@@ -2,6 +2,7 @@
 import fs from 'fs/promises';
 import { checkResourceExists } from '@greenwood/cli/src/lib/resource-utils.js';
 import { zipFunctions } from '@netlify/zip-it-and-ship-it'
+import { zip } from 'zip-a-folder';
 
 function generateOutputFormat(id, type) {
   // const path = type === 'page'
@@ -66,6 +67,7 @@ async function netlifyAdapter(compilation) {
 
   const files = await fs.readdir(outputDir);
   const isExecuteRouteModule = files.find(file => file.startsWith('execute-route-module'));
+  await fs.mkdir(new URL('./.netlify/functions/', projectDirectory), { recursive: true });
 
   for (const page of ssrPages) {
     const { id } = page;
@@ -100,6 +102,11 @@ async function netlifyAdapter(compilation) {
         new URL(`./${isExecuteRouteModule}`, outputRoot),
       )
     }
+
+    await zip(
+      new URL(`./netlify/functions/${id}/`, projectDirectory).pathname,
+      new URL(`./.netlify/functions/${id}.zip`, projectDirectory).pathname
+    );
   }
 
   // public/api/
@@ -129,12 +136,13 @@ async function netlifyAdapter(compilation) {
     );
   }
 
-  await zipFunctions(
-    new URL('./netlify/functions', projectDirectory).pathname, 
-    new URL('./.netlify/functions', projectDirectory).pathname, {
-    archiveFormat: 'zip',
-  })
-
+  // await zipFunctions(
+  //   new URL('./netlify/functions/', projectDirectory).pathname, 
+  //   new URL('./.netlify/functions/', projectDirectory).pathname, {
+  //   archiveFormat: 'zip',
+  //   nodeVersion: '18',
+  //   nodeBundler: 'esbuild'
+  // })
   // static assets / build
   // await fs.cp(
   //   outputDir,

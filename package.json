@@ -25,7 +25,8 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
-    "@netlify/zip-it-and-ship-it": "^9.13.0"
+    "@netlify/zip-it-and-ship-it": "^9.13.0",
+    "zip-a-folder": "^2.0.0"
   },
   "devDependencies": {
     "@greenwood/cli": "~0.29.0-alpha.0",
