@@ -1,4 +1,5 @@
 .greenwood/
 .netlify/
+netlify
 node_modules/
 public/
