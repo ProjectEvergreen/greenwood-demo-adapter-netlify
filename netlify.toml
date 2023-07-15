@@ -13,21 +13,21 @@
 #   node_bundler = "esbuild"
 
 # https://github.com/netlify/netlify-lambda/issues/90#issuecomment-486047201
-[[redirects]]
-  from = "/api/fragment"
-  to = "/.netlify/functions/api-fragment"
-  status = 200
+# [[redirects]]
+#   from = "/api/fragment"
+#   to = "/.netlify/functions/api-fragment"
+#   status = 200
 
-[[redirects]]
-  from = "/api/greeting"
-  to = "/.netlify/functions/api-greeting"
-  status = 200
+# [[redirects]]
+#   from = "/api/greeting"
+#   to = "/.netlify/functions/api-greeting"
+#   status = 200
 
 # TODO try as partial api-:splat?
-# [[redirects]]
-#   from = "/api/*"
-#   to = "/.netlify/functions/:splat"
-#   status = 200
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api-:splat"
+  status = 200
 
 # https://answers.netlify.com/t/serve-a-serverless-function-from-root/47275/2
 [[redirects]]
