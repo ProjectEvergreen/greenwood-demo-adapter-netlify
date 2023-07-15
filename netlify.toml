@@ -14,7 +14,7 @@
 
 # https://github.com/netlify/netlify-lambda/issues/90#issuecomment-486047201
 [[redirects]]
-  from = "/api/fragement"
+  from = "/api/fragment"
   to = "/.netlify/functions/api-fragment"
   status = 200
 
