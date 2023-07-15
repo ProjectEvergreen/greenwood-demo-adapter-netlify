@@ -91,7 +91,7 @@ async function netlifyAdapter(compilation) {
     const outputRoot = new URL(`./api/${id}/`, adapterOutputUrl);
 
     await fs.mkdir(outputRoot, { recursive: true });
-    await fs.writeFile(new URL(`./${id}.js`, outputRoot), outputFormat);
+    await fs.writeFile(new URL(`./api-${id}.js`, outputRoot), outputFormat);
     await fs.writeFile(new URL(`./package.json`, outputRoot), JSON.stringify({
       type: 'module'
     }));
