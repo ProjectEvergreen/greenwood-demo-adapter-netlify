@@ -91,11 +91,10 @@ async function netlifyAdapter(compilation) {
     const outputRoot = new URL(`./api/${id}/`, adapterOutputUrl);
 
     await fs.mkdir(outputRoot, { recursive: true });
-    await fs.writeFile(new URL(`./index.js`, outputRoot), outputFormat);
-    // TODO needed?
-    // await fs.writeFile(new URL(`./package.json`, outputRoot), JSON.stringify({
-    //   type: 'module'
-    // }));
+    await fs.writeFile(new URL(`./${id}.js`, outputRoot), outputFormat);
+    await fs.writeFile(new URL(`./package.json`, outputRoot), JSON.stringify({
+      type: 'module'
+    }));
 
     // TODO ideally all functions would be self contained
     // https://github.com/ProjectEvergreen/greenwood/issues/1118
@@ -108,6 +107,12 @@ async function netlifyAdapter(compilation) {
       new URL(`./api/assets/`, outputDir),
       new URL('./assets/', outputRoot),
       { recursive: true }
+    );
+
+    await fs.mkdir(new URL(`./netlify/functions/api/`, projectDirectory), { recursive: true });
+    await zip(
+      outputRoot.pathname,
+      new URL(`./netlify/functions/api/${id}.zip`, projectDirectory).pathname
     );
   }
 }
