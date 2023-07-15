@@ -109,10 +109,11 @@ async function netlifyAdapter(compilation) {
       { recursive: true }
     );
 
-    await fs.mkdir(new URL(`./netlify/functions/api/`, projectDirectory), { recursive: true });
+    // NOTE: All functions must live at the top level
+    // # https://github.com/netlify/netlify-lambda/issues/90#issuecomment-486047201
     await zip(
       outputRoot.pathname,
-      new URL(`./netlify/functions/api/${id}.zip`, projectDirectory).pathname
+      new URL(`./netlify/functions/api-${id}.zip`, projectDirectory).pathname
     );
   }
 }
