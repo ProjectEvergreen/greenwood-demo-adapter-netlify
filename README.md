@@ -27,7 +27,7 @@ This repo aims to demonstrate a couple of Greenwood's features ([API Routes](htt
 
 |Feature    |Greenwood |Serverless|Edge|
 |---------- |----------|----------|----|
-|API Routes |   ✅     |  ⚠️       | ❓ |
+|API Routes |   ✅     |  ✅       | ❓ |
 |SSR Pages  |   ✅     |  ✅       | ❓ |
 
 ## Serverless
@@ -36,8 +36,8 @@ The serverless demos include the following examples:
 
 ### API Routes
 
-- ⛔ [`/api/greeting?name{xxx}`](https://harmonious-gaufre-bb14cf.netlify.app/api/greeting) - An API that returns a JSON response and optionally uses the `name` query param for customization.  Otherwise returns a default message.
-- ⛔ [`/api/fragment`](https://harmonious-gaufre-bb14cf.netlify.app/api/fragment) - An API for returning fragments of server rendered Web Components as HTML, that are then appended to the DOM.  The same card component used in SSR also runs on the client to provide interactivity, like event handling.
+- ✅  [`/api/greeting?name{xxx}`](https://harmonious-gaufre-bb14cf.netlify.app/api/greeting) - An API that returns a JSON response and optionally uses the `name` query param for customization.  Otherwise returns a default message.
+- ✅  [`/api/fragment`](https://harmonious-gaufre-bb14cf.netlify.app/api/fragment) - An API for returning fragments of server rendered Web Components as HTML, that are then appended to the DOM.  The same card component used in SSR also runs on the client to provide interactivity, like event handling.
 
 ####  ✅ import.meta.url
 
