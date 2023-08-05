@@ -56,6 +56,7 @@ async function netlifyAdapter(compilation) {
   const adapterOutputUrl = new URL('./netlify/functions/', scratchDir);
   const ssrPages = compilation.graph.filter(page => page.isSSR);
   const apiRoutes = compilation.manifest.apis;
+  let redirects = '';
 
   if (!await checkResourceExists(adapterOutputUrl)) {
     await fs.mkdir(adapterOutputUrl, { recursive: true });
@@ -63,6 +64,7 @@ async function netlifyAdapter(compilation) {
 
   const files = await fs.readdir(outputDir);
   const isExecuteRouteModule = files.find(file => file.startsWith('execute-route-module'));
+
   await fs.mkdir(new URL('./netlify/functions/', projectDirectory), { recursive: true });
 
   for (const page of ssrPages) {
@@ -110,6 +112,23 @@ async function netlifyAdapter(compilation) {
     }
 
     await createOutputZip(id, outputType, new URL(`./${id}/`, adapterOutputUrl), projectDirectory);
+
+    redirects +=
+`[[redirects]]
+  from = "/${id}/"
+  to = "/.netlify/functions/${id}"
+  status = 200
+  force = true
+
+`
+  }
+
+  if (apiRoutes.size > 0) {
+    redirects +=
+`[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api-:splat"
+  status = 200`
   }
 
   for (const [key] of apiRoutes) {
@@ -138,6 +157,12 @@ async function netlifyAdapter(compilation) {
     // NOTE: All functions must live at the top level
     // https://github.com/netlify/netlify-lambda/issues/90#issuecomment-486047201
     await createOutputZip(id, outputType, outputRoot, projectDirectory);
+  }
+
+  // https://docs.netlify.com/routing/redirects/
+  console.log({ redirects });
+  if (redirects !== '') {
+    await fs.writeFile(new URL('./_redirects', outputDir), redirects);
   }
 }
 
