@@ -154,7 +154,7 @@ TODO
     - proxy netlify cli dev option?
     - should use _src/_ or _public/_?  depends on dev vs production mode?  Interestingly, the manual way only worked deployed when using _public/_
     - if esbuild worked w/ `import.meta.url`, we could probably ship unzipped bundles, and then dev would also work?
-1. [ ] Need to provide custom _netlify.toml_?
-1. [ ] Make sure to spread all headers / response properties in netlify functions adapter output
+1. [x] Need to provide custom _netlify.toml_?
+1. [x] Make sure to spread all headers / response properties in netlify functions adapter output
 1. [ ] SSR pages are bundling into _public/api/_ directory ? 
 1. [ ] Keep it as an experimental feature for 1.0 (or per platform?)
