@@ -6,21 +6,4 @@
   skip_processing = true
 
 [build.environment]
-  NODE_VERSION = "18.12.1"
-
-# https://answers.netlify.com/t/lambda-function-es-module-support/30673/16
-# [functions]
-#   node_bundler = "esbuild"
-
-# https://github.com/netlify/netlify-lambda/issues/90#issuecomment-486047201
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/api-:splat"
-  status = 200
-
-# https://answers.netlify.com/t/serve-a-serverless-function-from-root/47275/2
-[[redirects]]
-  from = "/artists/"
-  to = "/.netlify/functions/artists"
-  status = 200
-  force = true
+  NODE_VERSION = "18.x"
