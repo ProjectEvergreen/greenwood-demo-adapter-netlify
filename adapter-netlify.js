@@ -113,22 +113,12 @@ async function netlifyAdapter(compilation) {
 
     await createOutputZip(id, outputType, new URL(`./${id}/`, adapterOutputUrl), projectDirectory);
 
-    redirects +=
-`[[redirects]]
-  from = "/${id}/"
-  to = "/.netlify/functions/${id}"
-  status = 200
-  force = true
-
+    redirects +=`/${id}/ /.netlify/functions/${id}
 `
   }
 
   if (apiRoutes.size > 0) {
-    redirects +=
-`[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/api-:splat"
-  status = 200`
+    redirects += `/api/* /.netlify/functions/api-:splat`
   }
 
   for (const [key] of apiRoutes) {
