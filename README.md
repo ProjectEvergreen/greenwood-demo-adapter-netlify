@@ -15,7 +15,7 @@ To run locally
 You can now run these npm scripts
 - `npm run dev` - Start the demo with Greenwood local dev server
 - `npm run serve` - Start the demo with a production Greenwood build
-- `npm run netlify` - Start the Netlify server (live reload not supported)
+- `npm run serve:netlify` - Start the Netlify CLI server for testing production Greenwood builds locally (see caveats section in the plugin's README)
 
 > 👉 **Note**: _If deploying to your own Netlify instance, make sure you set the `AWS_LAMBDA_JS_RUNTIME` environment variable [in your Netlify UI](https://answers.netlify.com/t/aws-lambda-js-runtime-nodejs14-x/32161/2) to the value of  `nodejs18.x`_.
 
@@ -38,6 +38,14 @@ The serverless demos include the following examples:
 
 - ✅  [`/api/greeting?name{xxx}`](https://harmonious-gaufre-bb14cf.netlify.app/api/greeting) - An API that returns a JSON response and optionally uses the `name` query param for customization.  Otherwise returns a default message.
 - ✅  [`/api/fragment`](https://harmonious-gaufre-bb14cf.netlify.app/api/fragment) - An API for returning fragments of server rendered Web Components as HTML, that are then appended to the DOM.  The same card component used in SSR also runs on the client to provide interactivity, like event handling.
+
+### SSR Pages
+
+-  ✅ [`/artists`](https://harmonious-gaufre-bb14cf.netlify.app/artists) - SSR page for rendering Greenwood pages.
+
+### Known Issues
+
+> _**All known issue resolved!  Information left here for posterity**_
 
 ####  ✅ import.meta.url
 
@@ -124,13 +132,7 @@ So although this runs fine locally for `/api/fragment-manual`, when run on Netli
 
 ![Netlify ERR_REQUIRE_ESM](./netlify-err-require-esm.png)
 
-### SSR Pages
 
--  ✅ [`/artists`](https://harmonious-gaufre-bb14cf.netlify.app/artists) - SSR page for rendering Greenwood pages.  This implementation does not work because of `import.meta.url` (see above section on APIs)
-
-> _**Note**: There is an interesting issue here because Greenwood would have to do a different type of output for manual bootstrapping vs "idiomatic" bootstrapping.  Maybe this will have to be an override provided by the adapter plugin at build time?_
-
-TODO
 
 ## Edge
 
