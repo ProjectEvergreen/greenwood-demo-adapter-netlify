@@ -4,8 +4,9 @@ import { getArtists } from '../services/artists.js';
 export async function handler(request) {
   const params = new URLSearchParams(request.url.slice(request.url.indexOf('?')));
   const offset = params.has('offset') ? parseInt(params.get('offset'), 10) : null;
+  const limit = 5;
   const headers = new Headers();
-  const artists = await getArtists(offset);
+  const artists = (await getArtists()).slice(offset, offset + limit);
   const { html } = await renderFromHTML(`
     ${
       artists.map((item, idx) => {
