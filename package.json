@@ -1,7 +1,7 @@
 {
   "name": "greenwood-demo-adapter-netlify",
   "version": "1.0.0",
-  "description": "A demonstration repo for using Greenwood with Netlify Serverless and Edge functions",
+  "description": "A demonstration repo for deploying a full-stack Greenwood app with Netlify static hosting and Serverless + Edge functions",
   "author": "Owen Buckley <owen@thegreenhouse.io>",
   "type": "module",
   "license": "ISC",
