@@ -1,4 +1,4 @@
-import { greenwoodPluginAdapterNetlify } from './adapter-netlify.js';
+import { greenwoodPluginAdapterNetlify } from '@greenwood/plugin-adapter-netlify';
 
 export default {
   plugins: [

@@ -23,12 +23,9 @@
     "serve": "greenwood build && greenwood serve",
     "serve:netlify": "greenwood build && netlify dev"
   },
-  "dependencies": {
-    "zip-a-folder": "^2.0.0"
-  },
   "devDependencies": {
-    "@greenwood/cli": "~0.29.0-alpha.1",
-    "netlify-cli": "^15.10.0",
+    "@greenwood/cli": "~0.29.0-alpha.2",
+    "@greenwood/plugin-adapter-netlify": "~0.29.0-alpha.2",
     "rimraf": "^5.0.0"
   }
 }
