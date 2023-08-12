@@ -152,7 +152,7 @@ TODO
 1. [x] Will need to generate the _.netlify/functions_ folder on-demand / as part of the build instead of hardcoding, likely from _manifest.json_
 1. [x] For SSR pages, manual is the only option?  That will impact how pages can be built, e.g. manual card, shadow dom, etc and might to be configurable based on if the platform supports `import.meta.url` or not it seems.
     - we can get around this using our own bundling solution - https://docs.netlify.com/functions/deploy/?fn-language=js#custom-build-2
-1. [ ] How to best manage local dev (runtime "compliance")
+1. [x] How to best manage local dev (runtime "compliance") - mixed support, see caveats section of the plugin's README
     - proxy netlify cli dev option?
     - should use _src/_ or _public/_?  depends on dev vs production mode?  Interestingly, the manual way only worked deployed when using _public/_
     - if esbuild worked w/ `import.meta.url`, we could probably ship unzipped bundles, and then dev would also work?
