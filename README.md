@@ -2,7 +2,7 @@
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/7ad371a0-a026-423f-8a92-73b762975cc6/deploy-status)](https://app.netlify.com/sites/harmonious-gaufre-bb14cf/deploys)
 
-A demonstration repo for deploying a full-stack Greenwood app with Netlify static hosting and Serverless + Edge functions.
+A demonstration repo for deploying a full-stack [**Greenwood**](https://www.greenwoodjs.io/) app with Netlify static hosting and Serverless + Edge functions.
 
 ## Setup
 
