@@ -4,11 +4,13 @@ import { getArtists } from '../services/artists.js';
 export async function handler(request) {
   const formData = await request.formData();
   const term = formData.has('term') ? formData.get('term') : '';
+  console.log({ term });
   const artists = (await getArtists())
     .filter((artist => {
       return term !== '' && artist.name.toLowerCase().includes(term.toLowerCase());
     }));
   let body = '';
+  console.log({ artists });
 
   if (artists.length === 0) {
     body = 'No results found.';

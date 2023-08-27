@@ -1,8 +1,24 @@
 diff --git a/node_modules/@greenwood/plugin-adapter-netlify/src/index.js b/node_modules/@greenwood/plugin-adapter-netlify/src/index.js
-index c075eac..7336f17 100644
+index c075eac..df1cae1 100644
 --- a/node_modules/@greenwood/plugin-adapter-netlify/src/index.js
 +++ b/node_modules/@greenwood/plugin-adapter-netlify/src/index.js
-@@ -171,6 +171,17 @@ async function netlifyAdapter(compilation) {
+@@ -13,6 +13,7 @@ function generateOutputFormat(id) {
+     export async function handler (event, context = {}) {
+       const { rawUrl, body, headers = {}, httpMethod } = event;
+       const contentType = headers['content-type'] || '';
++      console.log({ rawUrl, body, headers, httpMethod, contentType });
+       let format = body;
+ 
+       if (['GET', 'HEAD'].includes(httpMethod.toUpperCase())) {
+@@ -33,6 +34,7 @@ function generateOutputFormat(id) {
+         format = JSON.stringify(body);
+       }
+ 
++      console.log({ format, headers });
+       const request = new Request(rawUrl, {
+         body: format,
+         method: httpMethod,
+@@ -171,6 +173,17 @@ async function netlifyAdapter(compilation) {
        );
      }
  
