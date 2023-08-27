@@ -19,7 +19,7 @@
     "Edge"
   ],
   "scripts": {
-    "clean": "rimraf public .greenwood",
+    "clean": "rimraf public .greenwood .netlify netlify",
     "dev": "greenwood develop",
     "build": "greenwood build",
     "serve": "greenwood build && greenwood serve",
