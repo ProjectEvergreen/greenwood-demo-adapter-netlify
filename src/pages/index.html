@@ -21,7 +21,6 @@
         let offset = 0 - page;
 
         globalThis.document.getElementById('load-artists').addEventListener('click', async () => {
-          console.debug('load more artist card fragments!');
           offset = offset += page;
           const html = await fetch(`/api/fragment?offset=${offset}`).then(resp => resp.text());
 
@@ -38,7 +37,7 @@
       <form>
         <label>
           Greetings Text
-          <input type="text" required/>
+          <input type="text" name="name" placeholder="your name..." required/>
         </label>
         <button type="submit">Click me for a greeting!</button>
       </form>
