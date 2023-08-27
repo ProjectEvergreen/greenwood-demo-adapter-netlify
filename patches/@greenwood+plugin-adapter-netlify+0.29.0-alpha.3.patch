@@ -1,8 +1,8 @@
 diff --git a/node_modules/@greenwood/plugin-adapter-netlify/src/index.js b/node_modules/@greenwood/plugin-adapter-netlify/src/index.js
-index c075eac..df1cae1 100644
+index c075eac..bbff9fe 100644
 --- a/node_modules/@greenwood/plugin-adapter-netlify/src/index.js
 +++ b/node_modules/@greenwood/plugin-adapter-netlify/src/index.js
-@@ -13,6 +13,7 @@ function generateOutputFormat(id) {
+@@ -13,15 +13,19 @@ function generateOutputFormat(id) {
      export async function handler (event, context = {}) {
        const { rawUrl, body, headers = {}, httpMethod } = event;
        const contentType = headers['content-type'] || '';
@@ -10,7 +10,21 @@ index c075eac..df1cae1 100644
        let format = body;
  
        if (['GET', 'HEAD'].includes(httpMethod.toUpperCase())) {
-@@ -33,6 +34,7 @@ function generateOutputFormat(id) {
+         format = null
+       } else if (contentType.includes('application/x-www-form-urlencoded')) {
+         const formData = new FormData();
++        const searchParams = new URLSearchParams(body);
+ 
+-        for (const key of Object.keys(body)) {
+-          formData.append(key, body[key]);
++        for (const key of searchParams.keys()) {
++          const value = searchParams.get(key);
++          console.log({ key, value });
++          formData.append(key, value);
+         }
+ 
+         // when using FormData, let Request set the correct headers
+@@ -33,6 +37,7 @@ function generateOutputFormat(id) {
          format = JSON.stringify(body);
        }
  
@@ -18,7 +32,7 @@ index c075eac..df1cae1 100644
        const request = new Request(rawUrl, {
          body: format,
          method: httpMethod,
-@@ -171,6 +173,17 @@ async function netlifyAdapter(compilation) {
+@@ -171,6 +176,17 @@ async function netlifyAdapter(compilation) {
        );
      }
  
