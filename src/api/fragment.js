@@ -1,20 +1,20 @@
 import { renderFromHTML } from 'wc-compiler';
-import { getArtists } from '../services/artists.js';
+import { getProducts } from '../services/products.js';
 
 export async function handler(request) {
   const limit = 5;
   const params = new URLSearchParams(request.url.slice(request.url.indexOf('?')));
   const offset = params.has('offset') ? parseInt(params.get('offset'), 10) : null;
-  const artists = (await getArtists()).slice(offset, offset + limit);
+  const products = (await getProducts()).slice(offset, offset + limit);
   const { html } = await renderFromHTML(`
     ${
-      artists.map((item, idx) => {
-        const { name, imageUrl } = item;
+      products.map((item, idx) => {
+        const { title, thumbnail } = item;
 
         return `
           <app-card
-            title="${offset + idx + 1}) ${name}"
-            thumbnail="${imageUrl}"
+            title="${offset + idx + 1}) ${title}"
+            thumbnail="${thumbnail}"
           ></app-card>
         `;
       }).join('')

@@ -39,7 +39,7 @@ The serverless demos include the following examples:
 
 ### SSR Pages
 
--  ✅ [`/artists`](https://harmonious-gaufre-bb14cf.netlify.app/artists) - SSR page for rendering Greenwood pages.
+-  ✅ [`/products/`](https://harmonious-gaufre-bb14cf.netlify.app/products/) - SSR page for rendering Greenwood pages.
 
 ### Known Issues
 
