@@ -6,8 +6,7 @@
         globalThis.document.querySelector('form').addEventListener('submit', async (e) => {
           e.preventDefault();
 
-          const form = globalThis.document.querySelector('form');
-          const formData = new FormData(form);
+          const formData = new FormData(e.currentTarget);
           const term = formData.get('term');
           const html = await fetch('/api/search', {
             method: 'POST',

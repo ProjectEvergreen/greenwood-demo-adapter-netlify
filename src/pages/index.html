@@ -6,8 +6,9 @@
         globalThis.document.getElementsByTagName('form')[0].addEventListener('submit', async (e) => {
           e.preventDefault();
 
-          const input = document.getElementsByTagName('input')[0].value;
-          const data = await fetch(new URL(`/api/greeting?name=${input}`, window.location.href)).then(resp => resp.json());
+          const form = new FormData(e.currentTarget);
+          const name = form.get('name');
+          const data = await fetch(new URL(`/api/greeting?name=${name}`, window.location.href)).then(resp => resp.json());
 
           document.getElementById('greeting-output').textContent = `${data.message}! 👋`;
         });
