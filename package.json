@@ -26,6 +26,9 @@
     "serve:netlify": "greenwood build && netlify dev",
     "start": "npm run serve"
   },
+  "overrides": {
+    "wc-compiler": "~0.10.0"
+  },
   "devDependencies": {
     "@greenwood/cli": "~0.29.0",
     "@greenwood/plugin-adapter-netlify": "~0.29.0",
