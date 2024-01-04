@@ -24,8 +24,11 @@
         globalThis.document.getElementById('load-products').addEventListener('click', async () => {
           offset = offset += page;
           const html = await fetch(`/api/fragment?offset=${offset}`).then(resp => resp.text());
+          const fragment = new DOMParser().parseFromString(html, 'text/html', {
+            includeShadowRoots: true
+          });
 
-          document.getElementById('load-products-output').insertAdjacentHTML('beforeend', html);
+          document.getElementById('load-products-output').insertAdjacentHTML('beforeend', fragment.body.innerHTML);
         });
       });
     </script>
