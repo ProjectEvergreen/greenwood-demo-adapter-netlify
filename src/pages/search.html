@@ -15,8 +15,11 @@
               'content-type': 'application/x-www-form-urlencoded'
             })
           }).then(resp => resp.text());
+          const fragment = new DOMParser().parseFromString(html, 'text/html', {
+            includeShadowRoots: true
+          });
 
-          document.getElementById('search-products-output').innerHTML = html;
+          document.getElementById('search-products-output').innerHTML = fragment.body.innerHTML;
         });
       });
     </script>
