@@ -1,0 +1,13 @@
+diff --git a/node_modules/wc-compiler/src/jsx-loader.js b/node_modules/wc-compiler/src/jsx-loader.js
+index c6e5ec2..4012fe9 100644
+--- a/node_modules/wc-compiler/src/jsx-loader.js
++++ b/node_modules/wc-compiler/src/jsx-loader.js
+@@ -4,7 +4,7 @@ import * as acorn from 'acorn';
+ import * as walk from 'acorn-walk';
+ import { generate } from '@projectevergreen/escodegen-esm';
+ import fs from 'fs';
+-import jsx from 'acorn-jsx';
++import jsx from '@projectevergreen/acorn-jsx-esm';
+ import { parse, parseFragment, serialize } from 'parse5';
+ 
+ const jsxRegex = /\.(jsx)$/;
