@@ -24,7 +24,7 @@
         globalThis.document.getElementById('load-products').addEventListener('click', async () => {
           offset = offset += page;
           const html = await fetch(`/api/fragment?offset=${offset}`).then(resp => resp.text());
-          const fragment = new DOMParser().parseFromString(html, 'text/html', {
+          const fragment = Document.parseHTMLUnsafe(html, 'text/html', {
             includeShadowRoots: true
           });
 
