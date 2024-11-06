@@ -2,7 +2,7 @@
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/7ad371a0-a026-423f-8a92-73b762975cc6/deploy-status)](https://app.netlify.com/sites/harmonious-gaufre-bb14cf/deploys)
 
-A demonstration repo for deploying a full-stack [**Greenwood**](https://www.greenwoodjs.io/) app with Netlify static hosting and Serverless + Edge functions.
+A demonstration repo for deploying a full-stack [**Greenwood**](https://www.greenwoodjs.dev/) app with Netlify static hosting and Serverless + Edge functions.
 
 ## Setup
 
@@ -19,7 +19,7 @@ You can now run these npm scripts
 
 ## Demo
 
-This repo aims to demonstrate a couple of Greenwood's features ([API Routes](https://www.greenwoodjs.io/docs/api-routes/) and [SSR pages](https://www.greenwoodjs.io/docs/server-rendering/#routes)) leveraging Netlify's serverless and edge function capabilities, focused on using Web Components (WCC) and Web Standards to deliver the content for the demo.
+This repo aims to demonstrate a couple of Greenwood's features ([API Routes](https://www.greenwoodjs.dev/docs/pages/api-routes/) and [SSR pages](https://www.greenwoodjs.dev/docs/pages/server-rendering/)) leveraging Netlify's serverless and edge function capabilities, focused on using Web Components (WCC) and Web Standards to deliver the content for the demo.
 
 ## Status
 
