@@ -15,9 +15,7 @@
               'content-type': 'application/x-www-form-urlencoded'
             })
           }).then(resp => resp.text());
-          const fragment = Document.parseHTMLUnsafe(html, 'text/html', {
-            includeShadowRoots: true
-          });
+          const fragment = Document.parseHTMLUnsafe(html);
 
           document.getElementById('search-products-output').innerHTML = fragment.body.innerHTML;
         });
