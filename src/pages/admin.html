@@ -17,7 +17,7 @@
             })
           }).then(resp => resp.json());
 
-          document.getElementById('test-webhook=output').innerHTML = data.message;
+          document.getElementById('test-webhook-output').innerHTML = data.message;
         });
       });
     </script>
@@ -26,9 +26,9 @@
   <body>
     <article>
       <h2>Webhook API</h2>
-      <p>This is an example of a Greenwood API leveraging <code>Request.json</code> to mimic a webhook handler. You can see it fire in the network tab as <i>/api/webhooks/event</i></p>
+      <p>This is an example of a Greenwood API leveraging <code>Request.json</code> to mimic a webhook handler. You can see it fire in the network tab as <i>/api/event</i></p>
       <button id="test-webhook">Test Webhook</button>
-      <div id="test-webhook=output" aria-live="polite"></div>
+      <div id="test-webhook-output" aria-live="polite"></div>
     </article>
   </body>
 </html>
