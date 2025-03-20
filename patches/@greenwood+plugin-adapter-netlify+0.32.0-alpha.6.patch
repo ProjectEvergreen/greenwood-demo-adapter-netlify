@@ -1,0 +1,13 @@
+diff --git a/node_modules/@greenwood/plugin-adapter-netlify/src/index.js b/node_modules/@greenwood/plugin-adapter-netlify/src/index.js
+index 6fc9eef..1271ca0 100644
+--- a/node_modules/@greenwood/plugin-adapter-netlify/src/index.js
++++ b/node_modules/@greenwood/plugin-adapter-netlify/src/index.js
+@@ -34,8 +34,6 @@ function generateOutputFormat(id) {
+         // https://stackoverflow.com/a/43521052/417806
+         format = formData;
+         delete headers['content-type'];
+-      } else if(contentType.includes('application/json')) {
+-        format = JSON.stringify(body);
+       }
+ 
+       const request = new Request(rawUrl, {

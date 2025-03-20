@@ -24,11 +24,13 @@
     "build": "greenwood build",
     "serve": "greenwood build && greenwood serve",
     "serve:netlify": "greenwood build && netlify dev",
-    "start": "npm run serve"
+    "start": "npm run serve",
+    "postinstall": "patch-package"
   },
   "devDependencies": {
     "@greenwood/cli": "~0.32.0-alpha.6",
     "@greenwood/plugin-adapter-netlify": "~0.32.0-alpha.6",
+    "patch-package": "^8.0.0",
     "rimraf": "^6.0.0"
   }
 }
