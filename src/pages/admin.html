@@ -6,7 +6,7 @@
         globalThis.document.querySelector('button').addEventListener('click', async (e) => {
           e.preventDefault();
 
-          const data = await fetch('/api/webhooks/event', {
+          const data = await fetch('/api/event', {
             method: 'POST',
             body: JSON.stringify({
               name: "Test Event",
