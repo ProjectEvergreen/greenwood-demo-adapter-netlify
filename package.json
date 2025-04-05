@@ -27,8 +27,8 @@
     "start": "npm run serve"
   },
   "devDependencies": {
-    "@greenwood/cli": "~0.32.0-alpha.8",
-    "@greenwood/plugin-adapter-netlify": "~0.32.0-alpha.8",
+    "@greenwood/cli": "~0.32.0-alpha.9",
+    "@greenwood/plugin-adapter-netlify": "~0.32.0-alpha.9",
     "rimraf": "^6.0.0"
   }
 }
