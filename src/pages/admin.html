@@ -1,0 +1,34 @@
+<html>
+  <head>
+    <!-- Search API Setup -->
+    <script>
+      globalThis.addEventListener('DOMContentLoaded', () => {
+        globalThis.document.querySelector('button').addEventListener('click', async (e) => {
+          e.preventDefault();
+
+          const data = await fetch('/api/event', {
+            method: 'POST',
+            body: JSON.stringify({
+              name: "Test Event",
+              time: new Date().getTime()
+            }),
+            headers: new Headers({
+              'content-type': 'application/json'
+            })
+          }).then(resp => resp.json());
+
+          document.getElementById('test-webhook-output').innerHTML = data.message;
+        });
+      });
+    </script>
+  </head>
+
+  <body>
+    <article>
+      <h2>Webhook API</h2>
+      <p>This is an example of a Greenwood API leveraging <code>Request.json</code> to mimic a webhook handler. You can see it fire in the network tab as <i>/api/event</i></p>
+      <button id="test-webhook">Test Webhook</button>
+      <div id="test-webhook-output" aria-live="polite"></div>
+    </article>
+  </body>
+</html>
