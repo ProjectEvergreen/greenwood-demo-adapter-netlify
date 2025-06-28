@@ -19,7 +19,6 @@
     "Edge"
   ],
   "scripts": {
-    "clean": "rimraf public .greenwood .netlify netlify",
     "dev": "greenwood develop",
     "build": "greenwood build",
     "serve": "greenwood build && greenwood serve",
@@ -28,7 +27,6 @@
   },
   "devDependencies": {
     "@greenwood/cli": "~0.33.0-alpha.2",
-    "@greenwood/plugin-adapter-netlify": "~0.33.0-alpha.2",
-    "rimraf": "^6.0.0"
+    "@greenwood/plugin-adapter-netlify": "~0.33.0-alpha.2"
   }
 }
