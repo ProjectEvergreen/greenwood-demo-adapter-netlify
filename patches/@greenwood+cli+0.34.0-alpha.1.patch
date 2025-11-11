@@ -1,0 +1,479 @@
+diff --git a/node_modules/@greenwood/cli/src/index.js b/node_modules/@greenwood/cli/src/index.js
+index af47ef1..da76415 100755
+--- a/node_modules/@greenwood/cli/src/index.js
++++ b/node_modules/@greenwood/cli/src/index.js
+@@ -3,6 +3,10 @@ import { generateCompilation } from "./lifecycles/compile.js";
+ async function run(command) {
+   process.env.__GWD_COMMAND__ = command;
+ 
++  if (!globalThis.URLPattern) {
++    await import("urlpattern-polyfill");
++  }
++
+   try {
+     console.info(`Running Greenwood with the ${command} command.`);
+     const compilation = await generateCompilation();
+diff --git a/node_modules/@greenwood/cli/src/lib/api-route-worker.js b/node_modules/@greenwood/cli/src/lib/api-route-worker.js
+index 231e379..61f8825 100644
+--- a/node_modules/@greenwood/cli/src/lib/api-route-worker.js
++++ b/node_modules/@greenwood/cli/src/lib/api-route-worker.js
+@@ -29,7 +29,7 @@ async function responseAsObject(response) {
+   };
+ }
+ 
+-async function executeRouteModule({ href, request }) {
++async function executeRouteModule({ href, request, props }) {
+   const { body, headers = {}, method, url } = request;
+   const contentType = headers["content-type"] || "";
+   // @ts-expect-error see https://github.com/microsoft/TypeScript/issues/42866
+@@ -47,11 +47,16 @@ async function executeRouteModule({ href, request }) {
+       header: headers,
+       body: format,
+     }),
++    {
++      props: {
++        ...props,
++      },
++    },
+   );
+ 
+   parentPort.postMessage(await responseAsObject(response));
+ }
+ 
+-parentPort.on("message", async (task) => {
+-  await executeRouteModule(task);
++parentPort.on("message", async (task, props) => {
++  await executeRouteModule(task, props);
+ });
+diff --git a/node_modules/@greenwood/cli/src/lib/execute-route-module.js b/node_modules/@greenwood/cli/src/lib/execute-route-module.js
+index 43f9534..3731201 100644
+--- a/node_modules/@greenwood/cli/src/lib/execute-route-module.js
++++ b/node_modules/@greenwood/cli/src/lib/execute-route-module.js
+@@ -8,6 +8,7 @@ async function executeRouteModule({
+   htmlContents = null,
+   scripts = [],
+   request,
++  props,
+   contentOptions = {},
+ }) {
+   const data = {
+@@ -35,10 +36,15 @@ async function executeRouteModule({
+ 
+     if (body) {
+       if (module.default) {
+-        const { html } = await renderToString(new URL(moduleUrl), false, { request, compilation });
++        const { html } = await renderToString(new URL(moduleUrl), false, {
++          request,
++          compilation,
++          props,
++        });
+ 
+         data.body = html;
+       } else if (getBody) {
++        // TODO do we need to pass props here too?
+         data.body = await getBody(compilation, page, request);
+       }
+     }
+diff --git a/node_modules/@greenwood/cli/src/lib/ssr-route-worker.js b/node_modules/@greenwood/cli/src/lib/ssr-route-worker.js
+index b10d823..df15559 100644
+--- a/node_modules/@greenwood/cli/src/lib/ssr-route-worker.js
++++ b/node_modules/@greenwood/cli/src/lib/ssr-route-worker.js
+@@ -11,6 +11,7 @@ async function executeModule({
+   scripts = "[]",
+   request,
+   contentOptions = "{}",
++  props,
+ }) {
+   const { executeRouteModule } = await import(executeModuleUrl);
+   const data = await executeRouteModule({
+@@ -22,6 +23,7 @@ async function executeModule({
+     scripts: JSON.parse(scripts),
+     request,
+     contentOptions: JSON.parse(contentOptions),
++    props,
+   });
+ 
+   parentPort.postMessage(data);
+diff --git a/node_modules/@greenwood/cli/src/lib/url-utils.js b/node_modules/@greenwood/cli/src/lib/url-utils.js
+new file mode 100644
+index 0000000..30364cb
+--- /dev/null
++++ b/node_modules/@greenwood/cli/src/lib/url-utils.js
+@@ -0,0 +1,46 @@
++function getDynamicSegmentsFromRoute({ route, relativePagePath, extension, basePath }) {
++  const dynamicRoute = route.replace("[", ":").replace("]", "");
++  const pattern = new URLPattern({ pathname: route.replace("[", ":").replace("]", "") });
++  const dynamicSegments = pattern.test(`https://example.com${basePath}${route}`);
++  const segmentKey = relativePagePath
++    .split("/")
++    [relativePagePath.split("/").length - 1].replace(extension, "")
++    .replace("[", "")
++    .replace("]", "");
++
++  return { dynamicSegments, segmentKey, dynamicRoute };
++}
++
++function getMatchingDynamicApiRoute(apis, pathname) {
++  return Array.from(apis.keys()).find((key) => {
++    const route = apis.get(key);
++    return (
++      route.segment &&
++      new URLPattern({ pathname: `${route.segment.pathname}*` }).test(
++        `https://example.com${pathname}`,
++      )
++    );
++  });
++}
++
++function getMatchingDynamicSsrRoute(graph, pathname) {
++  return graph.find((node) => {
++    return (
++      (pathname !== "/404/") !== "/404/" &&
++      node.segment &&
++      new URLPattern({ pathname: node.segment.pathname }).test(`https://example.com${pathname}`)
++    );
++  });
++}
++
++function getPropsFromSegment(segment, pathname) {
++  return new URLPattern({ pathname: segment.pathname }).exec(`https://example.com${pathname}`)
++    .pathname.groups;
++}
++
++export {
++  getDynamicSegmentsFromRoute,
++  getMatchingDynamicApiRoute,
++  getPropsFromSegment,
++  getMatchingDynamicSsrRoute,
++};
+diff --git a/node_modules/@greenwood/cli/src/lifecycles/bundle.js b/node_modules/@greenwood/cli/src/lifecycles/bundle.js
+index 6149e09..1ef0356 100644
+--- a/node_modules/@greenwood/cli/src/lifecycles/bundle.js
++++ b/node_modules/@greenwood/cli/src/lifecycles/bundle.js
+@@ -298,7 +298,7 @@ async function bundleSsrPages(compilation, optimizePlugins) {
+     // would be nice to see if this can be done in a single pass though...
+     await asyncForEach(ssrPages, async (page) => {
+       const { route } = page;
+-      let staticHtml = "<content-outlet></content-outlet>";
++      let staticHtml = `<output for="content"></output>`;
+ 
+       staticHtml = await getPageLayout(staticHtml, compilation, page);
+       staticHtml = await getAppLayout(staticHtml, compilation, page);
+@@ -361,7 +361,7 @@ async function bundleSsrPages(compilation, optimizePlugins) {
+ 
+         const moduleUrl = new URL('${relativeDepth}${pagesPathDiff}${pagePath.replace("./", "")}', import.meta.url);
+ 
+-        export async function handler(request) {
++        export async function handler(request, props) {
+           const compilation = JSON.parse(\`${JSON.stringify({
+             ...compilation,
+             graph: pruneGraph(compilation.graph),
+@@ -371,11 +371,11 @@ async function bundleSsrPages(compilation, optimizePlugins) {
+           const page = JSON.parse(\`${JSON.stringify(pruneGraph([page])[0])
+             .replace(/\\"/g, "&quote")
+             .replace(/\\n/g, "")}\`);
+-          const data = await executeRouteModule({ moduleUrl, compilation, page, request, contentOptions: { body: true } });
++          const data = await executeRouteModule({ moduleUrl, compilation, page, request, contentOptions: { body: true }, props });
+           let staticHtml = \`${staticHtml}\`;
+ 
+           if (data.body) {
+-            staticHtml = staticHtml.replace(\/\<content-outlet>(.*)<\\/content-outlet>\/s, data.body);
++            staticHtml = staticHtml.replace(\/\<output for="content">(.*)<\\/output>\/s, data.body);
+           }
+ 
+           return new Response(staticHtml, {
+diff --git a/node_modules/@greenwood/cli/src/lifecycles/graph.js b/node_modules/@greenwood/cli/src/lifecycles/graph.js
+index 90d4c16..061810c 100644
+--- a/node_modules/@greenwood/cli/src/lifecycles/graph.js
++++ b/node_modules/@greenwood/cli/src/lifecycles/graph.js
+@@ -3,6 +3,7 @@ import fs from "node:fs/promises";
+ import fm from "front-matter";
+ import { checkResourceExists, requestAsObject } from "../lib/resource-utils.js";
+ import { activeFrontmatterKeys } from "../lib/content-utils.js";
++import { getDynamicSegmentsFromRoute } from "../lib/url-utils.js";
+ import { Worker } from "node:worker_threads";
+ 
+ function getLabelFromRoute(_route) {
+@@ -26,7 +27,12 @@ function getLabelFromRoute(_route) {
+ }
+ 
+ function getIdFromRelativePathPath(relativePathPath, extension) {
+-  return relativePathPath.replace(`.${extension}`, "").replace("./", "").replace(/\//g, "-");
++  return relativePathPath
++    .replace(`.${extension}`, "")
++    .replace("./", "")
++    .replace(/\//g, "-")
++    .replace("[", "-")
++    .replace("]", "-");
+ }
+ 
+ function trackCollectionsForPage(page, collections) {
+@@ -104,6 +110,12 @@ const generateGraph = async (compilation) => {
+ 
+           // TODO should API routes be run in isolation mode like SSR pages?
+           const { isolation } = await import(filenameUrl).then((module) => module);
++          const { dynamicSegments, segmentKey, dynamicRoute } = getDynamicSegmentsFromRoute({
++            route,
++            relativePagePath,
++            extension,
++            basePath,
++          });
+ 
+           /*
+            * API Properties (per route)
+@@ -122,6 +134,7 @@ const generateGraph = async (compilation) => {
+             outputHref: new URL(relativePagePath, outputDir).href.replace(`.${extension}`, ".js"),
+             route: `${basePath}${route}`,
+             isolation,
++            segment: dynamicSegments ? { key: segmentKey, pathname: dynamicRoute } : null,
+           });
+         } else if (isPage) {
+           let root = filename
+@@ -245,6 +258,14 @@ const generateGraph = async (compilation) => {
+            * hydration: if this page needs hydration support
+            * servePage: signal that this is a custom page file type (static | dynamic)
+            */
++
++          const { dynamicSegments, segmentKey, dynamicRoute } = getDynamicSegmentsFromRoute({
++            route,
++            relativePagePath,
++            extension,
++            basePath,
++          });
++
+           const page = {
+             id: decodeURIComponent(getIdFromRelativePathPath(relativePagePath, extension)),
+             label: decodeURIComponent(label),
+@@ -264,6 +285,7 @@ const generateGraph = async (compilation) => {
+             isolation,
+             hydration,
+             servePage: isCustom,
++            segment: dynamicSegments ? { key: segmentKey, pathname: dynamicRoute } : null,
+           };
+ 
+           pages.push(page);
+diff --git a/node_modules/@greenwood/cli/src/lifecycles/serve.js b/node_modules/@greenwood/cli/src/lifecycles/serve.js
+index 10039a8..99dd3a1 100644
+--- a/node_modules/@greenwood/cli/src/lifecycles/serve.js
++++ b/node_modules/@greenwood/cli/src/lifecycles/serve.js
+@@ -9,6 +9,11 @@ import {
+   transformKoaRequestIntoStandardRequest,
+   requestAsObject,
+ } from "../lib/resource-utils.js";
++import {
++  getMatchingDynamicApiRoute,
++  getMatchingDynamicSsrRoute,
++  getPropsFromSegment,
++} from "../lib/url-utils.js";
+ import { Readable } from "node:stream";
+ import { Worker } from "node:worker_threads";
+ 
+@@ -360,12 +365,30 @@ async function getHybridServer(compilation) {
+   app.use(async (ctx) => {
+     try {
+       const url = new URL(`http://localhost:${config.port}${ctx.url}`);
++      const { pathname } = url;
+       const matchingRoute = graph.find((node) => node.route === url.pathname) || { data: {} };
+       const isApiRoute = manifest.apis.has(url.pathname);
+       const request = transformKoaRequestIntoStandardRequest(url, ctx.request);
++      const matchingApiRouteWithSegment = getMatchingDynamicApiRoute(
++        compilation.manifest.apis,
++        pathname,
++      );
++      const matchingRouteWithSegment =
++        getMatchingDynamicSsrRoute(compilation.graph, pathname) || {};
++
++      if (
++        !config.prerender &&
++        (matchingRoute.isSSR || matchingRouteWithSegment.isSSR) &&
++        !matchingRoute.prerender
++      ) {
++        const entryPointUrl = new URL(
++          matchingRoute?.outputHref ?? matchingRouteWithSegment.outputHref,
++        );
++        const props =
++          matchingRouteWithSegment && matchingRouteWithSegment.segment
++            ? getPropsFromSegment(matchingRouteWithSegment.segment, pathname)
++            : undefined;
+ 
+-      if (!config.prerender && matchingRoute.isSSR && !matchingRoute.prerender) {
+-        const entryPointUrl = new URL(matchingRoute.outputHref);
+         let html;
+ 
+         if (matchingRoute.isolation || isolationMode) {
+@@ -393,12 +416,13 @@ async function getHybridServer(compilation) {
+               routeModuleUrl: entryPointUrl.href,
+               request,
+               compilation: JSON.stringify(compilation),
++              props,
+             });
+           });
+         } else {
+           // @ts-expect-error see https://github.com/microsoft/TypeScript/issues/42866
+           const { handler } = await import(entryPointUrl);
+-          const response = await handler(request, compilation);
++          const response = await handler(request, props);
+ 
+           html = Readable.from(response.body);
+         }
+@@ -407,8 +431,13 @@ async function getHybridServer(compilation) {
+         ctx.message = "OK";
+         ctx.set("Content-Type", "text/html");
+         ctx.status = 200;
+-      } else if (isApiRoute) {
+-        const apiRoute = manifest.apis.get(url.pathname);
++      } else if (isApiRoute || matchingApiRouteWithSegment) {
++        const apiRoute = manifest.apis.get(matchingApiRouteWithSegment ?? pathname);
++        const props =
++          matchingRouteWithSegment && apiRoute.segment
++            ? getPropsFromSegment(apiRoute.segment, pathname)
++            : undefined;
++
+         const entryPointUrl = new URL(apiRoute.outputHref);
+         let body, status, headers, statusText;
+ 
+@@ -439,12 +468,13 @@ async function getHybridServer(compilation) {
+             worker.postMessage({
+               href: entryPointUrl.href,
+               request: req,
++              props,
+             });
+           });
+         } else {
+           // @ts-expect-error see https://github.com/microsoft/TypeScript/issues/42866
+           const { handler } = await import(entryPointUrl);
+-          const response = await handler(request);
++          const response = await handler(request, { props });
+ 
+           body = response.body;
+           status = response.status;
+diff --git a/node_modules/@greenwood/cli/src/plugins/resource/plugin-api-routes.js b/node_modules/@greenwood/cli/src/plugins/resource/plugin-api-routes.js
+index 4e2a2e8..d9a68d5 100644
+--- a/node_modules/@greenwood/cli/src/plugins/resource/plugin-api-routes.js
++++ b/node_modules/@greenwood/cli/src/plugins/resource/plugin-api-routes.js
+@@ -4,6 +4,7 @@
+  *
+  */
+ import { requestAsObject } from "../../lib/resource-utils.js";
++import { getMatchingDynamicApiRoute, getPropsFromSegment } from "../../lib/url-utils.js";
+ import { Worker } from "node:worker_threads";
+ 
+ class ApiRoutesResource {
+@@ -13,15 +14,34 @@ class ApiRoutesResource {
+   }
+ 
+   async shouldServe(url) {
++    const { basePath } = this.compilation.config;
+     const { protocol, pathname } = url;
+ 
+-    return protocol.startsWith("http") && this.compilation.manifest.apis.has(pathname);
++    if (!protocol.startsWith("http") || !pathname.startsWith(`${basePath}/api/`)) {
++      return;
++    }
++
++    const matchingRouteWithSegment = getMatchingDynamicApiRoute(
++      this.compilation.manifest.apis,
++      pathname,
++    );
++
++    return matchingRouteWithSegment || this.compilation.manifest.apis.has(pathname);
+   }
+ 
+   async serve(url, request) {
+-    const api = this.compilation.manifest.apis.get(url.pathname);
++    const { pathname } = url;
++    const matchingRouteWithSegment = getMatchingDynamicApiRoute(
++      this.compilation.manifest.apis,
++      pathname,
++    );
++    const api = this.compilation.manifest.apis.get(matchingRouteWithSegment ?? pathname);
+     const apiUrl = new URL(api.pageHref);
+     const href = apiUrl.href;
++    const props =
++      matchingRouteWithSegment && api.segment
++        ? getPropsFromSegment(api.segment, pathname)
++        : undefined;
+ 
+     if (process.env.__GWD_COMMAND__ === "develop") {
+       const workerUrl = new URL("../../lib/api-route-worker.js", import.meta.url);
+@@ -40,7 +60,7 @@ class ApiRoutesResource {
+           }
+         });
+ 
+-        worker.postMessage({ href, request: req });
++        worker.postMessage({ href, request: req, props });
+       });
+       const { headers, body, status, statusText } = response;
+ 
+@@ -52,7 +72,7 @@ class ApiRoutesResource {
+     } else {
+       const { handler } = await import(href);
+ 
+-      return await handler(request);
++      return await handler(request, props);
+     }
+   }
+ }
+diff --git a/node_modules/@greenwood/cli/src/plugins/resource/plugin-standard-html.js b/node_modules/@greenwood/cli/src/plugins/resource/plugin-standard-html.js
+index f1d1153..ffd333d 100644
+--- a/node_modules/@greenwood/cli/src/plugins/resource/plugin-standard-html.js
++++ b/node_modules/@greenwood/cli/src/plugins/resource/plugin-standard-html.js
+@@ -7,6 +7,7 @@
+ import fs from "node:fs/promises";
+ import { getPageLayout, getAppLayout, getGreenwoodScripts } from "../../lib/layout-utils.js";
+ import { requestAsObject } from "../../lib/resource-utils.js";
++import { getMatchingDynamicSsrRoute, getPropsFromSegment } from "../../lib/url-utils.js";
+ import { Worker } from "node:worker_threads";
+ import { parse } from "node-html-parser";
+ 
+@@ -21,10 +22,13 @@ class StandardHtmlResource {
+     const { protocol, pathname } = url;
+     const hasMatchingPageRoute = this.compilation.graph.find((node) => node.route === pathname);
+     const isSPA = this.compilation.graph.find((node) => node.isSPA) && pathname.indexOf(".") < 0;
++    const matchingRouteWithSegment = getMatchingDynamicSsrRoute(this.compilation.graph, pathname);
+ 
+     return (
+       protocol.startsWith("http") &&
+-      (hasMatchingPageRoute || (isSPA && request.headers.get("Accept").indexOf("text/html") >= 0))
++      (hasMatchingPageRoute ||
++        matchingRouteWithSegment ||
++        (isSPA && request.headers.get("Accept").indexOf("text/html") >= 0))
+     );
+   }
+ 
+@@ -34,6 +38,8 @@ class StandardHtmlResource {
+     const { pathname } = url;
+     const isSpaRoute = this.compilation.graph.find((node) => node.isSPA);
+     const matchingRoute = this.compilation.graph.find((node) => node.route === pathname) || {};
++    const matchingRouteWithSegment =
++      getMatchingDynamicSsrRoute(this.compilation.graph, pathname) || {};
+     const { pageHref } = matchingRoute;
+     const filePath =
+       !matchingRoute.external && pageHref
+@@ -68,12 +74,16 @@ class StandardHtmlResource {
+           break;
+         }
+       }
+-    } else if (matchingRoute.isSSR) {
+-      const routeModuleLocationUrl = new URL(pageHref);
++    } else if (matchingRoute.isSSR || matchingRouteWithSegment.isSSR) {
++      const routeModuleLocationUrl = new URL(pageHref ?? matchingRouteWithSegment.pageHref);
+       const routeWorkerUrl = this.compilation.config.plugins
+         .find((plugin) => plugin.type === "renderer")
+         .provider().executeModuleUrl;
+       const req = await requestAsObject(request);
++      const props =
++        matchingRouteWithSegment && matchingRouteWithSegment.segment
++          ? getPropsFromSegment(matchingRouteWithSegment.segment, pathname)
++          : undefined;
+ 
+       await new Promise((resolve, reject) => {
+         const worker = new Worker(new URL("../../lib/ssr-route-worker.js", import.meta.url));
+@@ -101,6 +111,7 @@ class StandardHtmlResource {
+           contentOptions: JSON.stringify({
+             body: true,
+           }),
++          props,
+         });
+       });
+     }
