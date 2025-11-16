@@ -1,24 +1,28 @@
 diff --git a/node_modules/@greenwood/plugin-adapter-netlify/src/index.js b/node_modules/@greenwood/plugin-adapter-netlify/src/index.js
-index 549448a..03fe986 100644
+index 549448a..6c407f8 100644
 --- a/node_modules/@greenwood/plugin-adapter-netlify/src/index.js
 +++ b/node_modules/@greenwood/plugin-adapter-netlify/src/index.js
-@@ -7,8 +7,14 @@ import {
+@@ -7,15 +7,26 @@ import {
  import { zip } from "zip-a-folder";
  
  // https://docs.netlify.com/functions/create/?fn-language=js
 -function generateOutputFormat(id) {
 +function generateOutputFormat(id, type, segmentKey) {
    const handlerAlias = "$handler";
+-
 +  // TODO: use `URLPattern` for extracting props after we upgrade to Node24
 +  const extractProps = segmentKey
 +    ? type === 'page'
 +      ? `const props = { ${segmentKey}: rawUrl.split('/')[url.split('/').length - 2] }`
 +      : `const props = { ${segmentKey}: rawUrl.split('?')[0].split('/').pop() }`
 +    : 'const props = {}';
- 
++  // const path = segment ? segment.pathname : route;
++  // export const config = {
++  //   path: ['${path}']
++  // };
    return `
      import { handler as ${handlerAlias} } from './${id}.js';
-@@ -16,6 +22,8 @@ function generateOutputFormat(id) {
+ 
      export async function handler (event, context = {}) {
        const { rawUrl, body, headers = {}, httpMethod } = event;
        const contentType = headers['content-type'] || '';
@@ -27,7 +31,7 @@ index 549448a..03fe986 100644
        let format = body;
  
        if (['GET', 'HEAD'].includes(httpMethod.toUpperCase())) {
-@@ -41,7 +49,11 @@ function generateOutputFormat(id) {
+@@ -41,7 +52,11 @@ function generateOutputFormat(id) {
          method: httpMethod,
          headers: new Headers(headers)
        });
@@ -40,7 +44,7 @@ index 549448a..03fe986 100644
  
        return {
          statusCode: response.status,
-@@ -52,10 +64,10 @@ function generateOutputFormat(id) {
+@@ -52,10 +67,10 @@ function generateOutputFormat(id) {
    `;
  }
  
@@ -53,7 +57,7 @@ index 549448a..03fe986 100644
  
    await fs.mkdir(outputRoot, { recursive: true });
    await fs.writeFile(new URL(`./${filename}.js`, outputRoot), outputFormat);
-@@ -101,14 +113,14 @@ async function netlifyAdapter(compilation) {
+@@ -101,14 +116,14 @@ async function netlifyAdapter(compilation) {
    await fs.mkdir(adapterOutputUrl, { recursive: true });
  
    for (const page of ssrPages) {
@@ -70,7 +74,7 @@ index 549448a..03fe986 100644
  
      // handle user's actual route entry file
      await fs.cp(
-@@ -131,17 +143,21 @@ async function netlifyAdapter(compilation) {
+@@ -131,17 +146,21 @@ async function netlifyAdapter(compilation) {
        projectDirectory,
      );
  
@@ -95,7 +99,7 @@ index 549448a..03fe986 100644
  
      await fs.cp(new URL(outputHref), new URL(`./${id}.js`, outputRoot), { recursive: true });
  
-@@ -155,11 +171,18 @@ async function netlifyAdapter(compilation) {
+@@ -155,11 +174,18 @@ async function netlifyAdapter(compilation) {
      // https://github.com/netlify/netlify-lambda/issues/90#issuecomment-486047201
      await createOutputZip(id, outputType, outputRoot, projectDirectory);
  
