@@ -96,10 +96,10 @@ index b10d823..df15559 100644
    parentPort.postMessage(data);
 diff --git a/node_modules/@greenwood/cli/src/lib/url-utils.js b/node_modules/@greenwood/cli/src/lib/url-utils.js
 new file mode 100644
-index 0000000..30364cb
+index 0000000..b42a2e4
 --- /dev/null
 +++ b/node_modules/@greenwood/cli/src/lib/url-utils.js
-@@ -0,0 +1,46 @@
+@@ -0,0 +1,47 @@
 +function getDynamicSegmentsFromRoute({ route, relativePagePath, extension, basePath }) {
 +  const dynamicRoute = route.replace("[", ":").replace("]", "");
 +  const pattern = new URLPattern({ pathname: route.replace("[", ":").replace("]", "") });
@@ -108,7 +108,8 @@ index 0000000..30364cb
 +    .split("/")
 +    [relativePagePath.split("/").length - 1].replace(extension, "")
 +    .replace("[", "")
-+    .replace("]", "");
++    .replace("]", "")
++    .replace('.', '');
 +
 +  return { dynamicSegments, segmentKey, dynamicRoute };
 +}
@@ -183,7 +184,7 @@ index 6149e09..1ef0356 100644
  
            return new Response(staticHtml, {
 diff --git a/node_modules/@greenwood/cli/src/lifecycles/graph.js b/node_modules/@greenwood/cli/src/lifecycles/graph.js
-index 90d4c16..061810c 100644
+index 90d4c16..9bf4183 100644
 --- a/node_modules/@greenwood/cli/src/lifecycles/graph.js
 +++ b/node_modules/@greenwood/cli/src/lifecycles/graph.js
 @@ -3,6 +3,7 @@ import fs from "node:fs/promises";
@@ -208,24 +209,26 @@ index 90d4c16..061810c 100644
  }
  
  function trackCollectionsForPage(page, collections) {
-@@ -104,6 +110,12 @@ const generateGraph = async (compilation) => {
+@@ -104,7 +110,13 @@ const generateGraph = async (compilation) => {
  
            // TODO should API routes be run in isolation mode like SSR pages?
            const { isolation } = await import(filenameUrl).then((module) => module);
+-
 +          const { dynamicSegments, segmentKey, dynamicRoute } = getDynamicSegmentsFromRoute({
 +            route,
 +            relativePagePath,
 +            extension,
 +            basePath,
 +          });
- 
++          console.log({ dynamicSegments, segmentKey, dynamicRoute })
            /*
             * API Properties (per route)
+            *----------------------
 @@ -122,6 +134,7 @@ const generateGraph = async (compilation) => {
              outputHref: new URL(relativePagePath, outputDir).href.replace(`.${extension}`, ".js"),
              route: `${basePath}${route}`,
              isolation,
-+            segment: dynamicSegments ? { key: segmentKey, pathname: dynamicRoute } : null,
++            segment: dynamicRoute.indexOf(':') > 0 ? { key: segmentKey, pathname: dynamicRoute } : null,
            });
          } else if (isPage) {
            let root = filename
@@ -248,7 +251,7 @@ index 90d4c16..061810c 100644
              isolation,
              hydration,
              servePage: isCustom,
-+            segment: dynamicSegments ? { key: segmentKey, pathname: dynamicRoute } : null,
++            segment: dynamicRoute.indexOf(':') > 0 ? { key: segmentKey, pathname: dynamicRoute } : null,
            };
  
            pages.push(page);
