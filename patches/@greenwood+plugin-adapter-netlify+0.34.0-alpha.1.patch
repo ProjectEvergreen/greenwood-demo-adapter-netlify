@@ -1,5 +1,5 @@
 diff --git a/node_modules/@greenwood/plugin-adapter-netlify/src/index.js b/node_modules/@greenwood/plugin-adapter-netlify/src/index.js
-index 549448a..6c407f8 100644
+index 549448a..a7a3418 100644
 --- a/node_modules/@greenwood/plugin-adapter-netlify/src/index.js
 +++ b/node_modules/@greenwood/plugin-adapter-netlify/src/index.js
 @@ -7,15 +7,26 @@ import {
@@ -81,7 +81,7 @@ index 549448a..6c407f8 100644
 -    redirects += `${route} /.netlify/functions/${id} 200
 +    console.log({ segment, route, id });
 +    redirects += segment
-+      ? `${segment.pathname.replace(`/:${segment.key}/`, `/:${segment.key}`)} /.netlify/functions/api-${id} 200
++      ? `${segment.pathname.replace(`/:${segment.key}/`, `/:${segment.key}`)} /.netlify/functions/${id} 200
 +`
 +      : `${route} /.netlify/functions/${id} 200
  `;
