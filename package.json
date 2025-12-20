@@ -23,16 +23,11 @@
     "build": "greenwood build",
     "serve": "greenwood build && greenwood serve",
     "serve:netlify": "greenwood build && netlify dev",
-    "start": "npm run serve",
-    "postinstall": "patch-package"
-  },
-   "dependencies": {
-    "urlpattern-polyfill": "^10.1.0"
+    "start": "npm run serve"
   },
   "devDependencies": {
-    "@greenwood/cli": "~0.34.0-alpha.1",
-    "@greenwood/plugin-adapter-netlify": "~0.34.0-alpha.1",
-    "patch-package": "^8.0.1"
+    "@greenwood/cli": "~0.34.0-alpha.2",
+    "@greenwood/plugin-adapter-netlify": "~0.34.0-alpha.2"
   },
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-gnu": "^4.50.0"

@@ -1,6 +1,5 @@
-export async function handler(request, { props }) {
-  console.log({ props });
-  if(props?.type !== 'event') {
+export async function handler(request, { params }) {
+  if(params?.type !== 'event') {
     return new Response('Not Found', { status: 404 });
   }
 
