@@ -1,9 +1,13 @@
-async function getProducts() {
-  const data = (await fetch(`https://dummyjson.com/products`)
+async function getProducts(id) {
+  const idSuffix = id ? `/${id}` : '';
+  const data = (await fetch(`https://dummyjson.com/products${idSuffix}`)
     .then(resp => resp.json()));
-  const { products } = data;
 
-  return products;
+  if (id) {
+    return data;
+  }
+
+  return data.products;
 }
 
 export { getProducts };

@@ -14,7 +14,11 @@ export default class Card extends HTMLElement {
     if (!this.shadowRoot) {
       const thumbnail = this.getAttribute('thumbnail');
       const title = this.getAttribute('title');
+      const id = this.getAttribute('id');
       const template = document.createElement('template');
+      const link = id
+        ? `<a href="/product/${id}/">View Item Details</a>`
+        : '';
 
       template.innerHTML = `
         <style>
@@ -27,7 +31,7 @@ export default class Card extends HTMLElement {
             width: fit-content;
             border-radius: 10px;
             padding: 2rem 1rem;
-            height: 680px;
+            height: 700px;
             justify-content: space-between;
             background-color: #fff;
             overflow-x: hidden;
@@ -63,7 +67,8 @@ export default class Card extends HTMLElement {
         <div>
           <h3>${title}</h3>
           <img src="${thumbnail}" alt="${title}" loading="lazy" width="100%">
-          <button onclick="this.getRootNode().host.selectItem()">View Item Details</button>
+          ${link}
+          <button onclick="this.getRootNode().host.selectItem()">Preview Item Details</button>
         </div>
       `;
       this.attachShadow({ mode: 'open' });

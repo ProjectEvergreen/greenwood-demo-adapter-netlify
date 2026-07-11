@@ -5,10 +5,11 @@ export default class ProductsPage extends HTMLElement {
   async connectedCallback() {
     const products = await getProducts();
     const html = products.map(product => {
-      const { title, thumbnail } = product;
+      const { title, thumbnail, id } = product;
 
       return `
         <app-card
+          id="${id}"
           title="${title}"
           thumbnail="${thumbnail}"
         >
