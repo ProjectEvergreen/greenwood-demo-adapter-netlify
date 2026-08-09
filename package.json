@@ -26,8 +26,8 @@
     "start": "npm run serve"
   },
   "devDependencies": {
-    "@greenwood/cli": "~0.34.0",
-    "@greenwood/plugin-adapter-netlify": "~0.34.0"
+    "@greenwood/cli": "~0.35.0-alpha.0",
+    "@greenwood/plugin-adapter-netlify": "~0.35.0-alpha.0"
   },
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-gnu": "^4.50.0"
