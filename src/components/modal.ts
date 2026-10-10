@@ -1,3 +1,13 @@
+export interface ModalDetail {
+  content: string;
+}
+
+declare global {
+  interface WindowEventMap {
+    'update-modal': CustomEvent<ModalDetail>;
+  }
+}
+
 const template = document.createElement('template');
 
 template.innerHTML = `
@@ -40,18 +50,21 @@ template.innerHTML = `
 
 export default class Modal extends HTMLElement {
 
-  updateModal(detail) {
+  updateModal(detail: ModalDetail): void {
     console.log(`selected item is => ${detail.content}`);
-    const modal = this.shadowRoot.querySelector('dialog');
+    const modal = this.shadowRoot?.querySelector('dialog');
 
-    modal.querySelector('#content').textContent = detail.content;
+    if (!modal) return;
+
+    const content = modal.querySelector('#content');
+    if (content) content.textContent = detail.content;
     modal.showModal();
   }
 
   connectedCallback() {
     if (!this.shadowRoot) {
-      this.attachShadow({ mode: 'open' });
-      this.shadowRoot.appendChild(template.content.cloneNode(true));
+      const shadowRoot = this.attachShadow({ mode: 'open' });
+      shadowRoot.appendChild(template.content.cloneNode(true));
     }
 
     // setup event handlers for updating and closing the dialog
@@ -59,9 +72,9 @@ export default class Modal extends HTMLElement {
       this.updateModal(event.detail);
     })
 
-    const modal = this.shadowRoot.querySelector('dialog');
+    const modal = this.shadowRoot?.querySelector('dialog');
 
-    modal.querySelector('button').addEventListener("click", () => {
+    modal?.querySelector('button')?.addEventListener("click", () => {
       modal.close();
     });
   }

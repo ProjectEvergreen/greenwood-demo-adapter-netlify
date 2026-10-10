@@ -1,9 +1,10 @@
 import { renderFromHTML } from 'wc-compiler';
-import { getProducts } from '../../services/products.js';
+import { getProducts } from '../../services/products.ts';
 
-export async function handler(request) {
+export async function handler(request: Request): Promise<Response> {
   const formData = await request.formData();
-  const term = formData.has('term') ? formData.get('term') : '';
+  const value = formData.get('term');
+  const term = typeof value === 'string' ? value : '';
   const products = (await getProducts())
     .filter((product => {
       return term !== '' && product.title.toLowerCase().includes(term.toLowerCase());
@@ -28,7 +29,7 @@ export async function handler(request) {
         }).join('')
       }
     `, [
-      new URL('../../components/card.js', import.meta.url)
+      new URL('../../components/card.ts', import.meta.url)
     ]);
 
     body = html;

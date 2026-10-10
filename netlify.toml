@@ -1,6 +1,6 @@
 [build]
   publish = "public/"
-  command = "npm run build"
+  command = "npm run check && npm run build"
 
 [build.processing]
   skip_processing = true

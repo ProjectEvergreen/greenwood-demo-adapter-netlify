@@ -1,12 +1,12 @@
-import '../../components/card.js';
-import { getProducts } from '../../services/products.js';
+import '../../components/card.ts';
+import { getProducts } from '../../services/products.ts';
 
 export default class ProductDetailsPage extends HTMLElement {
-  #id;
+  #id: string;
 
-  constructor({ params }) {
+  constructor({ params }: { params: { id: string } }) {
     super();
-    this.#id = params?.id;
+    this.#id = params.id;
   }
 
   async connectedCallback() {

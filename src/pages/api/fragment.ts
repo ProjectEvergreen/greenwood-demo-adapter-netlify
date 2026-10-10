@@ -1,10 +1,10 @@
 import { renderFromHTML } from 'wc-compiler';
-import { getProducts } from '../../services/products.js';
+import { getProducts } from '../../services/products.ts';
 
-export async function handler(request) {
+export async function handler(request: Request): Promise<Response> {
   const limit = 5;
   const params = new URLSearchParams(request.url.slice(request.url.indexOf('?')));
-  const offset = params.has('offset') ? parseInt(params.get('offset'), 10) : null;
+  const offset = parseInt(params.get('offset') ?? '0', 10);
   const products = (await getProducts()).slice(offset, offset + limit);
   const { html } = await renderFromHTML(`
     ${
@@ -21,7 +21,7 @@ export async function handler(request) {
       }).join('')
     }
   `, [
-    new URL('../../components/card.js', import.meta.url)
+    new URL('../../components/card.ts', import.meta.url)
   ]);
 
 

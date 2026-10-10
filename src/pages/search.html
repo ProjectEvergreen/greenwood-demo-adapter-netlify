@@ -1,26 +1,6 @@
 <html>
   <head>
-    <!-- Search API Setup -->
-    <script>
-      globalThis.addEventListener('DOMContentLoaded', () => {
-        globalThis.document.querySelector('form').addEventListener('submit', async (e) => {
-          e.preventDefault();
-
-          const formData = new FormData(e.currentTarget);
-          const term = formData.get('term');
-          const html = await fetch('/api/search', {
-            method: 'POST',
-            body: new URLSearchParams({ term }).toString(),
-            headers: new Headers({
-              'content-type': 'application/x-www-form-urlencoded'
-            })
-          }).then(resp => resp.text());
-          const fragment = Document.parseHTMLUnsafe(html);
-
-          document.getElementById('search-products-output').innerHTML = fragment.body.innerHTML;
-        });
-      });
-    </script>
+    <script type="module" src="../scripts/search.ts"></script>
   </head>
 
   <body>
