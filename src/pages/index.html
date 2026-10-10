@@ -1,35 +1,6 @@
 <html>
   <head>
-    <!-- Greeting API Setup -->
-    <script>
-      globalThis.addEventListener('DOMContentLoaded', () => {
-        globalThis.document.getElementsByTagName('form')[0].addEventListener('submit', async (e) => {
-          e.preventDefault();
-
-          const form = new FormData(e.currentTarget);
-          const name = form.get('name');
-          const data = await fetch(new URL(`/api/greeting?name=${name}`, window.location.href)).then(resp => resp.json());
-
-          document.getElementById('greeting-output').textContent = `${data.message}! 👋`;
-        });
-      });
-    </script>
-
-    <!-- Fragment API Setup -->
-    <script>
-      globalThis.addEventListener('DOMContentLoaded', () => {
-        const page = 5;
-        let offset = 0 - page;
-
-        globalThis.document.getElementById('load-products').addEventListener('click', async () => {
-          offset = offset += page;
-          const html = await fetch(`/api/fragment?offset=${offset}`).then(resp => resp.text());
-          const fragment = Document.parseHTMLUnsafe(html);
-
-          document.getElementById('load-products-output').insertAdjacentHTML('beforeend', fragment.body.innerHTML);
-        });
-      });
-    </script>
+    <script type="module" src="../scripts/index.ts"></script>
   </head>
 
   <body>

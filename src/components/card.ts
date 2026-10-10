@@ -1,7 +1,9 @@
+import type { ModalDetail } from './modal.ts';
+
 export default class Card extends HTMLElement {
 
   selectItem() {
-    const itemSelectedEvent = new CustomEvent("update-modal", {
+    const itemSelectedEvent = new CustomEvent<ModalDetail>("update-modal", {
       detail: {
         content: `You selected the "${this.title}"`,
       },
@@ -71,8 +73,8 @@ export default class Card extends HTMLElement {
           <button onclick="this.getRootNode().host.selectItem()">Preview Item Details</button>
         </div>
       `;
-      this.attachShadow({ mode: 'open' });
-      this.shadowRoot.appendChild(template.content.cloneNode(true));
+      const shadowRoot = this.attachShadow({ mode: 'open' });
+      shadowRoot.appendChild(template.content.cloneNode(true));
     }
   }
 }

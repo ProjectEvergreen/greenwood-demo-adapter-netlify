@@ -23,11 +23,13 @@
     "build": "greenwood build",
     "serve": "greenwood serve",
     "serve:netlify": "greenwood build && netlify dev",
-    "start": "npm run serve"
+    "start": "npm run serve",
+    "check": "tsc"
   },
   "devDependencies": {
-    "@greenwood/cli": "~0.34.0",
-    "@greenwood/plugin-adapter-netlify": "~0.34.0"
+    "@greenwood/cli": "~0.35.0-alpha.3",
+    "@greenwood/plugin-adapter-netlify": "~0.35.0-alpha.3",
+    "typescript": "^6.0.3"
   },
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-gnu": "^4.50.0"

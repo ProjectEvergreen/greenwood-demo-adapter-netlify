@@ -1,26 +1,6 @@
 <html>
   <head>
-    <!-- Search API Setup -->
-    <script>
-      globalThis.addEventListener('DOMContentLoaded', () => {
-        globalThis.document.querySelector('button').addEventListener('click', async (e) => {
-          e.preventDefault();
-
-          const data = await fetch('/api/webhook/event', {
-            method: 'POST',
-            body: JSON.stringify({
-              name: "Test Event",
-              time: new Date().getTime()
-            }),
-            headers: new Headers({
-              'content-type': 'application/json'
-            })
-          }).then(resp => resp.json());
-
-          document.getElementById('test-webhook-output').innerHTML = data.message;
-        });
-      });
-    </script>
+    <script type="module" src="../scripts/admin.ts"></script>
   </head>
 
   <body>
